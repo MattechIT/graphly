@@ -42,13 +42,13 @@ export function updateUI() {
     btnAddEdge.classList.toggle('active', state.currentMode === 'addEdge');
 
     if (state.currentMode === 'addNode') {
-        infoText.innerText = "Clicca per creare un nodo.";
+        infoText.innerText = "Click to add a new node.";
         svgCanvas.style.cursor = "crosshair";
     } else if (state.currentMode === 'addEdge') {
-        infoText.innerText = "Trascina da un nodo all'altro per collegarli.";
+        infoText.innerText = "Drag from one node to another to connect them.";
         svgCanvas.style.cursor = "pointer";
     } else {
-        infoText.innerText = "Trascina i nodi per spostarli.";
+        infoText.innerText = "Drag nodes to move them.";
         svgCanvas.style.cursor = "default";
     }
 }
