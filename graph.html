@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor di Grafi Interattivo</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            overflow: hidden; /* Evita scrollbar */
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            user-select: none; /* Evita selezione del testo durante il drag */
+        }
+
+        /* Toolbar in alto */
+        #toolbar {
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            display: flex;
+            gap: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 10;
+            align-items: center;
+        }
+
+        button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        button:active { transform: scale(0.98); }
+
+        button.active {
+            background-color: #4CAF50; /* Verde quando attivo */
+            color: white;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
+        }
+
+        button:not(.active) {
+            background-color: #eee;
+            color: #333;
+        }
+
+        /* Area del grafo (SVG) */
+        #graph-container {
+            flex-grow: 1;
+            background-color: #f9f9f9;
+            cursor: default;
+            position: relative;
+        }
+
+        svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        /* Stili degli elementi del grafo */
+        .node {
+            fill: #3498db;
+            stroke: #2980b9;
+            stroke-width: 2px;
+            cursor: grab;
+            transition: fill 0.2s, stroke 0.2s, stroke-width 0.2s;
+        }
+
+        .node:hover {
+            fill: #5dade2;
+        }
+
+        /* Stile per il nodo che sta per ricevere l'arco */
+        .node.target-hover {
+            stroke: #f1c40f; /* Giallo/Oro */
+            stroke-width: 4px;
+            fill: #f39c12;
+        }
+
+        .edge {
+            stroke: #555;
+            stroke-width: 3px;
+            pointer-events: none; /* L'arco non deve interferire col mouse */
+        }
+
+        /* L'arco temporaneo che segue il mouse */
+        .drag-edge {
+            stroke: #999;
+            stroke-width: 2px;
+            stroke-dasharray: 5, 5; /* Linea tratteggiata */
+            pointer-events: none;
+        }
+
+        /* Testo istruzioni */
+        #info {
+            margin-left: auto;
+            font-size: 0.9em;
+            color: #ccc;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="toolbar">
+        <button id="btn-add-node" onclick="setMode('addNode')">+ Aggiungi Nodo</button>
+        <button id="btn-add-edge" onclick="setMode('addEdge')">-> Aggiungi Arco (Drag)</button>
+        <span id="info">Modalità attuale: Sposta (Default)</span>
+    </div>
+
+    <div id="graph-container">
+        <svg id="svg-canvas">
+            <g id="edges-layer"></g>
+            <g id="nodes-layer"></g>
+            <g id="drag-layer"></g>
+        </svg>
+    </div>
+
+    <script>
+        // --- STATO DELL'APPLICAZIONE ---
+        let currentMode = null; // null (sposta), 'addNode', 'addEdge'
+        let nodes = []; // Array {id, x, y, el}
+        let edges = []; // Array {id, source, target, el}
+        
+        // Stato per lo spostamento nodo
+        let draggedNodeData = null; // Il dato del nodo che si sta spostando
+
+        // Stato per la creazione arco (Drag & Connect)
+        let isDraggingEdge = false;
+        let edgeStartNodeDOM = null; // Il nodo DOM di partenza
+        let tempEdgeLine = null; // La linea SVG temporanea
+        let hoveredTargetNodeDOM = null; // Il nodo DOM su cui siamo sopra ora
+
+        let nodeIdCounter = 0;
+        
+        // Riferimenti al DOM
+        const svgCanvas = document.getElementById('svg-canvas');
+        const nodesLayer = document.getElementById('nodes-layer');
+        const edgesLayer = document.getElementById('edges-layer');
+        const dragLayer = document.getElementById('drag-layer');
+        const btnAddNode = document.getElementById('btn-add-node');
+        const btnAddEdge = document.getElementById('btn-add-edge');
+        const infoText = document.getElementById('info');
+
+        // Helper per coordinate SVG
+        function getMousePosition(evt) {
+            const rect = svgCanvas.getBoundingClientRect();
+            return {
+                x: evt.clientX - rect.left,
+                y: evt.clientY - rect.top
+            };
+        }
+
+        // --- GESTIONE MODALITÀ ---
+        function setMode(mode) {
+            if (currentMode === mode) {
+                currentMode = null;
+            } else {
+                currentMode = mode;
+            }
+            updateUI();
+        }
+
+        function updateUI() {
+            btnAddNode.classList.toggle('active', currentMode === 'addNode');
+            btnAddEdge.classList.toggle('active', currentMode === 'addEdge');
+
+            if (currentMode === 'addNode') {
+                infoText.innerText = "Clicca nello spazio vuoto per creare un nodo.";
+                svgCanvas.style.cursor = "crosshair";
+            } else if (currentMode === 'addEdge') {
+                infoText.innerText = "Tieni premuto su un nodo e trascina verso un altro per collegarli.";
+                svgCanvas.style.cursor = "pointer";
+            } else {
+                infoText.innerText = "Trascina i nodi per spostarli.";
+                svgCanvas.style.cursor = "default";
+            }
+        }
+
+        // --- FUNZIONI GRAFICHE (SVG) ---
+
+        // Crea un nodo
+        function createNode(x, y) {
+            const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            const id = `node-${nodeIdCounter++}`;
+            
+            circle.setAttribute("cx", x);
+            circle.setAttribute("cy", y);
+            circle.setAttribute("r", 20);
+            circle.setAttribute("class", "node");
+            circle.setAttribute("id", id);
+
+            // Eventi specifici del nodo
+            circle.addEventListener('mousedown', (e) => handleNodeMouseDown(e, id));
+            
+            // Eventi per l'illuminazione del target durante il drag dell'arco
+            circle.addEventListener('mouseenter', (e) => {
+                if (isDraggingEdge && edgeStartNodeDOM !== e.target) {
+                   hoveredTargetNodeDOM = e.target;
+                   hoveredTargetNodeDOM.classList.add('target-hover');
+                }
+            });
+            circle.addEventListener('mouseleave', (e) => {
+                if (hoveredTargetNodeDOM === e.target) {
+                    hoveredTargetNodeDOM.classList.remove('target-hover');
+                    hoveredTargetNodeDOM = null;
+                }
+            });
+
+            nodesLayer.appendChild(circle);
+            nodes.push({ id: id, x: x, y: y, el: circle });
+        }
+
+        // Crea un arco vero
+        function createEdge(sourceId, targetId) {
+            if (sourceId === targetId) return; // No auto-loop
+
+            // Controllo se esiste già (opzionale, ma utile)
+            const exists = edges.some(e => (e.source === sourceId && e.target === targetId) || (e.source === targetId && e.target === sourceId));
+            if(exists) return;
+
+            const sourceNodeData = nodes.find(n => n.id === sourceId);
+            const targetNodeData = nodes.find(n => n.id === targetId);
+
+            const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            
+            line.setAttribute("x1", sourceNodeData.x);
+            line.setAttribute("y1", sourceNodeData.y);
+            line.setAttribute("x2", targetNodeData.x);
+            line.setAttribute("y2", targetNodeData.y);
+            line.setAttribute("class", "edge");
+
+            edgesLayer.appendChild(line);
+            edges.push({ source: sourceId, target: targetId, el: line });
+        }
+
+        // Aggiorna posizione archi collegati a un nodo che si sposta
+        function updateEdgesForNode(nodeId, newX, newY) {
+            edges.forEach(edge => {
+                if (edge.source === nodeId) {
+                    edge.el.setAttribute("x1", newX);
+                    edge.el.setAttribute("y1", newY);
+                } else if (edge.target === nodeId) {
+                    edge.el.setAttribute("x2", newX);
+                    edge.el.setAttribute("y2", newY);
+                }
+            });
+        }
+
+        // --- EVENT HANDLERS PRINCIPALI ---
+
+        // Click sullo sfondo (Solo per creare nodi)
+        svgCanvas.addEventListener('mousedown', (e) => {
+            if (e.target.id === 'svg-canvas' && currentMode === 'addNode') {
+                const pos = getMousePosition(e);
+                createNode(pos.x, pos.y);
+            }
+        });
+
+        // Mouse Down sul NODO (Inizio spostamento O Inizio creazione arco)
+        function handleNodeMouseDown(e, nodeId) {
+            e.stopPropagation(); // Importante
+
+            const nodeDOM = e.target;
+            const nodeData = nodes.find(n => n.id === nodeId);
+
+            if (currentMode === 'addEdge') {
+                // --- INIZIO DRAG ARCO ---
+                isDraggingEdge = true;
+                edgeStartNodeDOM = nodeDOM;
+                
+                // Crea la linea temporanea
+                tempEdgeLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                tempEdgeLine.setAttribute("x1", nodeData.x);
+                tempEdgeLine.setAttribute("y1", nodeData.y);
+                // L'estremità iniziale è uguale alla partenza all'inizio
+                tempEdgeLine.setAttribute("x2", nodeData.x);
+                tempEdgeLine.setAttribute("y2", nodeData.y);
+                tempEdgeLine.setAttribute("class", "drag-edge");
+                dragLayer.appendChild(tempEdgeLine);
+
+            } else if (currentMode === null) {
+                // --- INIZIO SPOSTAMENTO NODO ---
+                draggedNodeData = nodeData;
+                nodeDOM.style.cursor = "grabbing";
+            }
+        }
+
+        // Mouse Move Globale (Gestisce sia spostamento nodo che linea temporanea arco)
+        window.addEventListener('mousemove', (e) => {
+            const pos = getMousePosition(e);
+
+            if (isDraggingEdge && tempEdgeLine) {
+                // Aggiorna la fine della linea temporanea dell'arco
+                tempEdgeLine.setAttribute("x2", pos.x);
+                tempEdgeLine.setAttribute("y2", pos.y);
+
+            } else if (draggedNodeData && currentMode === null) {
+                // Sposta il nodo
+                draggedNodeData.x = pos.x;
+                draggedNodeData.y = pos.y;
+                draggedNodeData.el.setAttribute("cx", pos.x);
+                draggedNodeData.el.setAttribute("cy", pos.y);
+
+                // Aggiorna gli archi collegati
+                updateEdgesForNode(draggedNodeData.id, pos.x, pos.y);
+            }
+        });
+
+        // Mouse Up Globale (Fine operazioni)
+        window.addEventListener('mouseup', () => {
+            // --- FINE DRAG ARCO ---
+            if (isDraggingEdge) {
+                // Se abbiamo rilasciato su un nodo valido illuminato
+                if (hoveredTargetNodeDOM && hoveredTargetNodeDOM !== edgeStartNodeDOM) {
+                    createEdge(edgeStartNodeDOM.id, hoveredTargetNodeDOM.id);
+                }
+
+                // Pulizia
+                if (tempEdgeLine) dragLayer.removeChild(tempEdgeLine);
+                if (hoveredTargetNodeDOM) hoveredTargetNodeDOM.classList.remove('target-hover');
+                
+                isDraggingEdge = false;
+                tempEdgeLine = null;
+                edgeStartNodeDOM = null;
+                hoveredTargetNodeDOM = null;
+            }
+
+            // --- FINE SPOSTAMENTO NODO ---
+            if (draggedNodeData) {
+                draggedNodeData.el.style.cursor = "grab";
+                draggedNodeData = null;
+            }
+        });
+
+    </script>
+</body>
+</html>
