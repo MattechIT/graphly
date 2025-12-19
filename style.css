@@ -21,6 +21,13 @@ body {
     align-items: center;
 }
 
+#logo {
+    width: 40px;
+    height: auto;
+    display: block;
+    object-fit: contain;
+}
+
 /* Stile generico per i pulsanti nella toolbar */
 button {
     padding: 8px 16px;
