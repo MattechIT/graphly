@@ -30,7 +30,13 @@ export function createNode(x, y) {
     return nodeData;
 }
 
-export function createEdge(sourceId, targetId) {
+export function createEdge(sourceId, targetId, opts = {}) {
+    // opts: { weight?, capacity? }
+    // Default: same numeric value for both weight and capacity
+    const DEFAULT_EDGE_VALUE = 1; // unit graph: weight=1, capacity=1
+    const weight = opts.weight ?? DEFAULT_EDGE_VALUE;
+    const capacity = opts.capacity ?? DEFAULT_EDGE_VALUE;
+
     if (sourceId === targetId) return;
     const exists = state.edges.some(e => e.source === sourceId && e.target === targetId);
     if (exists) return;
@@ -81,7 +87,7 @@ export function createEdge(sourceId, targetId) {
     edgesLayer.appendChild(line);
     edgesLayer.appendChild(hitArea);
 
-    state.edges.push({ source: sourceId, target: targetId, el: line, hitArea, id: edgeId });
+    state.edges.push({ source: sourceId, target: targetId, el: line, hitArea, id: edgeId, weight, capacity });
     return edgeId;
 }
 
