@@ -5,7 +5,10 @@ export const state = {
 
     // Collezioni
     nodes: [], // { id, x, y, el, label }
-    edges: [], // { source, target, el, hitArea, id }
+    // edges: array of edge objects. Each edge may include optional numeric
+    // properties `weight` and `capacity` used by graph algorithms.
+    // Example: { source, target, el, hitArea, id, weight, capacity }
+    edges: [],
 
     // Contatori
     nodeIdCounter: 0,
