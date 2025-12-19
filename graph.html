@@ -1,7 +1,5 @@
 <!DOCTYPE html>
 <!--
-    graph.html
-    -----------
     Interfaccia minimale per creare e manipolare un grafo orientato.
 
     Contenuto:
@@ -18,44 +16,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Carica il foglio di stile principales -->
     <link rel="stylesheet" href="style.css">
+    <!-- Carica il bootstrap dei moduli ES -->
+    <script type="module" src="js/index.js"></script>
     <title>Graph</title>
 </head>
 <body>
+    <!-- Barra degli strumenti -->
+    <nav id="toolbar" role="navigation" aria-label="Toolbar">
+        <button id="btn-add-node" type="button">Add Node</button>
+        <button id="btn-add-edge" type="button">-> Add Edge (Drag)</button>
+        <span id="info" role="status" aria-live="polite">Current Mode: Move</span>
+    </nav>
+    
+    <!-- Contenitore principale del grafo -->
+    <main id="main" role="main">
+        <div id="graph-container">
+            <svg id="svg-canvas">
+                <defs>
+                    <marker id="arrowhead" markerWidth="12" markerHeight="12" 
+                    refX="10" refY="3.5" orient="auto">
+                        <polygon points="0 0, 10 3.5, 0 7" fill="#34495e" />
+                    </marker>
+                    
+                    <marker id="arrowhead-drag" markerWidth="12" markerHeight="12" 
+                    refX="10" refY="3.5" orient="auto">
+                        <polygon points="0 0, 10 3.5, 0 7" fill="#95a5a6" />
+                    </marker>
+                </defs>
 
-    <div id="toolbar">
-        <button id="btn-add-node" onclick="setMode('addNode')">Add Node</button>
-        <button id="btn-add-edge" onclick="setMode('addEdge')">-> Add Edge (Drag)</button>
-        <span id="info">Current Mode: Move</span>
-    </div>
+                <g id="edges-layer"></g>
+                <g id="nodes-layer"></g>
+                <g id="drag-layer"></g>
+            </svg>
 
-    <div id="graph-container">
-        <svg id="svg-canvas">
-            <defs>
-                <marker id="arrowhead" markerWidth="12" markerHeight="12" 
-                refX="10" refY="3.5" orient="auto">
-                    <polygon points="0 0, 10 3.5, 0 7" fill="#34495e" />
-                </marker>
-                
-                <marker id="arrowhead-drag" markerWidth="12" markerHeight="12" 
-                refX="10" refY="3.5" orient="auto">
-                    <polygon points="0 0, 10 3.5, 0 7" fill="#95a5a6" />
-                </marker>
-            </defs>
-
-            <g id="edges-layer"></g>
-            <g id="nodes-layer"></g>
-            <g id="drag-layer"></g>
-        </svg>
-
-        <!-- Pannello Flottante -->
-        <div id="floating-panel">
-            <div class="panel-title">Impostazioni</div>
-            <div class="panel-option" onclick="panelOptionClick(1)">Opzione 1</div>
-            <div class="panel-option" onclick="panelOptionClick(2)">Opzione 2</div>
-            <div class="panel-option" onclick="panelOptionClick(3)">Opzione 3</div>
+            <!-- Pannello Flottante -->
+            <div id="floating-panel" role="dialog" aria-hidden="true" aria-label="Impostazioni elemento">
+                <div class="panel-title">Impostazioni</div>
+                <div class="panel-option" role="button" tabindex="0" data-option="1">Opzione 1</div>
+                <div class="panel-option" role="button" tabindex="0" data-option="2">Opzione 2</div>
+                <div class="panel-option" role="button" tabindex="0" data-option="3">Opzione 3</div>
+            </div>
         </div>
-    </div>
+    </main>
 </body>
-<script src="script.js"></script>
 </html>
