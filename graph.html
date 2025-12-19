@@ -1,144 +1,288 @@
 <!DOCTYPE html>
+<!--
+    graph.html
+    -----------
+    Interfaccia minimale per creare e manipolare un grafo orientato.
+
+    Contenuto:
+    - CSS per lo stile della toolbar, area grafica, nodi e archi
+    - SVG per il rendering dei nodi/archi e marker delle frecce
+    - JavaScript per gestire modalita' (aggiungi nodo, aggiungi arco),
+        drag & drop dei nodi, creazione archi, evidenziazione e pannello
+        flottante per le impostazioni degli elementi.
+
+    Tutti i commenti in questo file sono in italiano e spiegano in modo
+    approfondito le parti principali per facilitarne la manutenzione.
+-->
 <html lang="it">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editor di Grafi Interattivo</title>
+    <title>Grafo Orientato Perfetto</title>
     <style>
+        /* Corpo pagina: layout principale e comportamento globale */
         body {
-            font-family: sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             margin: 0;
-            overflow: hidden; /* Evita scrollbar */
+            overflow: hidden;
             display: flex;
             flex-direction: column;
             height: 100vh;
-            user-select: none; /* Evita selezione del testo durante il drag */
+            user-select: none;
         }
 
-        /* Toolbar in alto */
+        /* Barra superiore (toolbar): pulsanti di controllo e stato */
         #toolbar {
-            background-color: #333;
+            background-color: #2c3e50;
             color: white;
-            padding: 10px;
+            padding: 12px;
             display: flex;
-            gap: 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            gap: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             z-index: 10;
             align-items: center;
         }
 
+        /* Stile generico per i pulsanti nella toolbar */
         button {
-            padding: 8px 15px;
+            padding: 8px 16px;
             border: none;
-            border-radius: 4px;
+            border-radius: 6px;
             cursor: pointer;
-            font-weight: bold;
-            transition: background 0.2s, transform 0.1s;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.2s ease;
         }
 
-        button:active { transform: scale(0.98); }
+        button:active { transform: scale(0.96); }
 
         button.active {
-            background-color: #4CAF50; /* Verde quando attivo */
+            background-color: #27ae60;
             color: white;
-            box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
         }
 
         button:not(.active) {
-            background-color: #eee;
-            color: #333;
+            background-color: #ecf0f1;
+            color: #34495e;
         }
 
-        /* Area del grafo (SVG) */
+        /* Contenitore principale del grafo (controlla la dimensione SVG)
+            e fornisce eventuale texture di sfondo */
         #graph-container {
             flex-grow: 1;
-            background-color: #f9f9f9;
+            background-color: #f4f7f6;
             cursor: default;
             position: relative;
+            /* Texture a griglia opzionale per eleganza */
+            background-image: radial-gradient(#e0e0e0 1px, transparent 1px);
+            background-size: 20px 20px;
         }
 
+        /* L'elemento SVG che contiene i layer di nodi/archi */
         svg {
             width: 100%;
             height: 100%;
             display: block;
         }
 
-        /* Stili degli elementi del grafo */
+        /* NODI: cerchi che rappresentano i vertici del grafo */
+        /* La classe `.node` è applicata agli elementi <circle> */
         .node {
             fill: #3498db;
             stroke: #2980b9;
             stroke-width: 2px;
             cursor: grab;
-            transition: fill 0.2s, stroke 0.2s, stroke-width 0.2s;
+            transition: fill 0.2s, stroke-width 0.2s, stroke 0.2s;
         }
-
+        /* Hover sul nodo: usiamo lo stesso colore giallo/arancio usato
+           per la selezione dei target degli archi, così l'UI è coerente */
         .node:hover {
-            fill: #5dade2;
-        }
-
-        /* Stile per il nodo che sta per ricevere l'arco */
-        .node.target-hover {
-            stroke: #f1c40f; /* Giallo/Oro */
+            stroke: #f1c40f;
             stroke-width: 4px;
             fill: #f39c12;
+            filter: drop-shadow(0 0 5px rgba(241, 196, 15, 0.6));
+        }
+        
+        /* Stato visivo quando si trascina un arco sopra il nodo e il
+           nodo è un possibile target: stesso stile del hover intensificato */
+        .node.target-hover {
+            stroke: #f1c40f;
+            stroke-width: 4px;
+            fill: #f39c12;
+            filter: drop-shadow(0 0 5px rgba(241, 196, 15, 0.6));
         }
 
+        /* Testo numero nel centro del nodo. E' un <text> SVG con classe
+           `.node-label` che non interferisce con eventi del mouse */
+        .node-label {
+            fill: white;
+            font-size: 14px;
+            font-weight: bold;
+            text-anchor: middle;
+            dominant-baseline: central;
+            pointer-events: none; /* non riceve eventi mouse */
+            user-select: none;
+        }
+
+        /* Testo numero nel nodo */
+        .node-label {
+            fill: white;
+            font-size: 14px;
+            font-weight: bold;
+            text-anchor: middle;
+            dominant-baseline: central;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        /* ARCHI: le linee che collegano i nodi. Per usabilità 
+           abbiamo due tracciati per ogni arco: la linea visibile
+           (`.edge`) e una linea invisibile piu' spessa (`.edge-hitarea`)
+           che aumenta la zona di interazione del mouse.
+           - `.edge` è la linea visibile (colore, freccia a fine linea)
+           - `.edge-hitarea` è trasparente ma cattura hover/click
+        */
         .edge {
-            stroke: #555;
-            stroke-width: 3px;
-            pointer-events: none; /* L'arco non deve interferire col mouse */
+            stroke: #34495e;
+            stroke-width: 2px;
+            pointer-events: stroke; /* Permette hover sulla linea */
+            cursor: pointer;
+            transition: stroke 0.2s, stroke-width 0.2s;
         }
 
-        /* L'arco temporaneo che segue il mouse */
+        /* Hit area invisibile per aumentare la sensibilità all'hover */
+        .edge-hitarea {
+            stroke: transparent;
+            stroke-width: 12px; /* larghezza di sensibilità: aumentare per più tolleranza */
+            pointer-events: stroke;
+            cursor: pointer;
+        }
+
+        /* Stato visivo quando l'arco è evidenziato (hover) */
+        .edge:hover,
+        .edge.hover {
+            stroke: #9b59b6; /* colore evidenziato (temporaneo), può essere cambiato */
+            stroke-width: 4px;
+        }
+
+        /* Arco temporaneo (tratteggiato) */
         .drag-edge {
-            stroke: #999;
+            stroke: #95a5a6;
             stroke-width: 2px;
-            stroke-dasharray: 5, 5; /* Linea tratteggiata */
+            stroke-dasharray: 6, 4;
             pointer-events: none;
         }
 
-        /* Testo istruzioni */
         #info {
             margin-left: auto;
             font-size: 0.9em;
-            color: #ccc;
+            color: #bdc3c7;
+        }
+
+        /* PANNELLO FLOTTANTE */
+        #floating-panel {
+            position: absolute;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            padding: 8px 0;
+            min-width: 150px;
+            z-index: 100;
+            display: none;
+            border: 1px solid #e0e0e0;
+        }
+
+        #floating-panel.visible {
+            display: block;
+        }
+
+        #floating-panel .panel-title {
+            padding: 8px 12px;
+            font-weight: 600;
+            color: #2c3e50;
+            border-bottom: 1px solid #ecf0f1;
+            font-size: 13px;
+        }
+
+        #floating-panel .panel-option {
+            padding: 10px 12px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #34495e;
+            transition: background-color 0.15s;
+        }
+
+        #floating-panel .panel-option:hover {
+            background-color: #ecf0f1;
+        }
+
+        #floating-panel .panel-option:active {
+            background-color: #d5dbdb;
         }
     </style>
 </head>
 <body>
 
     <div id="toolbar">
-        <button id="btn-add-node" onclick="setMode('addNode')">+ Aggiungi Nodo</button>
-        <button id="btn-add-edge" onclick="setMode('addEdge')">-> Aggiungi Arco (Drag)</button>
-        <span id="info">Modalità attuale: Sposta (Default)</span>
+        <button id="btn-add-node" onclick="setMode('addNode')">Add Node</button>
+        <button id="btn-add-edge" onclick="setMode('addEdge')">-> Add Edge (Drag)</button>
+        <span id="info">Current Mode: Move</span>
     </div>
 
     <div id="graph-container">
         <svg id="svg-canvas">
+            <defs>
+                <marker id="arrowhead" markerWidth="12" markerHeight="12" 
+                refX="10" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#34495e" />
+                </marker>
+                
+                <marker id="arrowhead-drag" markerWidth="12" markerHeight="12" 
+                refX="10" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" fill="#95a5a6" />
+                </marker>
+            </defs>
+
             <g id="edges-layer"></g>
             <g id="nodes-layer"></g>
             <g id="drag-layer"></g>
         </svg>
+
+        <!-- Pannello Flottante -->
+        <div id="floating-panel">
+            <div class="panel-title">Impostazioni</div>
+            <div class="panel-option" onclick="panelOptionClick(1)">Opzione 1</div>
+            <div class="panel-option" onclick="panelOptionClick(2)">Opzione 2</div>
+            <div class="panel-option" onclick="panelOptionClick(3)">Opzione 3</div>
+        </div>
     </div>
 
     <script>
-        // --- STATO DELL'APPLICAZIONE ---
-        let currentMode = null; // null (sposta), 'addNode', 'addEdge'
-        let nodes = []; // Array {id, x, y, el}
-        let edges = []; // Array {id, source, target, el}
-        
-        // Stato per lo spostamento nodo
-        let draggedNodeData = null; // Il dato del nodo che si sta spostando
+        /* CONFIGURAZIONE E STATO
+         * ------------------------
+         * Questa sezione definisce costanti e variabili che mantengono lo
+         * stato dell'applicazione (nodi, archi, modalità correnti, elementi
+         * DOM di riferimento). Le funzioni più sotto leggono e modificano
+         * queste variabili per aggiornare la vista.
+         */
+        // Parametri geometrici
+        const NODE_RADIUS = 20; // raggio dei nodi in pixel
 
-        // Stato per la creazione arco (Drag & Connect)
-        let isDraggingEdge = false;
-        let edgeStartNodeDOM = null; // Il nodo DOM di partenza
-        let tempEdgeLine = null; // La linea SVG temporanea
-        let hoveredTargetNodeDOM = null; // Il nodo DOM su cui siamo sopra ora
+        // Stato applicazione
+        let currentMode = null; // null | 'addNode' | 'addEdge'
+        let nodes = []; // elenco nodi: { id, x, y, el, label }
+        let edges = []; // elenco archi: { source, target, el, hitArea, id }
+        let nodeIdCounter = 0; // contatore per numerare i nodi (0,1,2...)
 
-        let nodeIdCounter = 0;
-        
-        // Riferimenti al DOM
+        // Stato di interazione temporaneo
+        let draggedNodeData = null; // informazioni sul nodo che si sta trascinando
+        let isDraggingEdge = false; // true se si sta creando un arco tramite drag
+        let edgeStartNodeDOM = null; // elemento DOM circolare di partenza del drag per gli archi
+        let tempEdgeLine = null; // linea SVG temporanea mentre si trascina l'arco
+        let hoveredTargetNodeDOM = null; // nodo attualmente evidenziato come possibile target
+
+        // Riferimenti DOM cache
         const svgCanvas = document.getElementById('svg-canvas');
         const nodesLayer = document.getElementById('nodes-layer');
         const edgesLayer = document.getElementById('edges-layer');
@@ -146,8 +290,15 @@
         const btnAddNode = document.getElementById('btn-add-node');
         const btnAddEdge = document.getElementById('btn-add-edge');
         const infoText = document.getElementById('info');
+        const floatingPanel = document.getElementById('floating-panel');
 
-        // Helper per coordinate SVG
+        // Stato pannello flottante: mantiene il tipo e id dell'elemento selezionato
+        let selectedElement = null; // { type: 'node'|'edge', id: string }
+
+        /*
+         * getMousePosition(evt)
+         * Restituisce {x,y} delle coordinate relative all'SVG per un evento mouse
+         */
         function getMousePosition(evt) {
             const rect = svgCanvas.getBoundingClientRect();
             return {
@@ -156,49 +307,71 @@
             };
         }
 
-        // --- GESTIONE MODALITÀ ---
+        /*
+         * setMode(mode)
+         * Cambia la modalità dell'editor tra aggiunta nodo, aggiunta arco
+         * o modalità di default (spostamento). Se si richiama la stessa
+         * modalità viene disattivata (toggle).
+         */
         function setMode(mode) {
-            if (currentMode === mode) {
-                currentMode = null;
-            } else {
-                currentMode = mode;
-            }
+            if (currentMode === mode) currentMode = null;
+            else currentMode = mode;
             updateUI();
         }
 
+        /*
+         * updateUI()
+         * Aggiorna pulsanti e cursore in base alla modalità corrente e
+         * mostra un testo guida nella toolbar.
+         */
         function updateUI() {
             btnAddNode.classList.toggle('active', currentMode === 'addNode');
             btnAddEdge.classList.toggle('active', currentMode === 'addEdge');
-
+            
             if (currentMode === 'addNode') {
-                infoText.innerText = "Clicca nello spazio vuoto per creare un nodo.";
+                infoText.innerText = "Click to create a node.";
                 svgCanvas.style.cursor = "crosshair";
             } else if (currentMode === 'addEdge') {
-                infoText.innerText = "Tieni premuto su un nodo e trascina verso un altro per collegarli.";
+                infoText.innerText = "Drag from one node to another to connect them.";
                 svgCanvas.style.cursor = "pointer";
             } else {
-                infoText.innerText = "Trascina i nodi per spostarli.";
+                infoText.innerText = "Drag nodes to move them.";
                 svgCanvas.style.cursor = "default";
             }
         }
 
-        // --- FUNZIONI GRAFICHE (SVG) ---
+        // --- CREAZIONE GRAFICA ---
 
-        // Crea un nodo
+        /*
+         * createNode(x,y)
+         * Crea un nodo (cerchio SVG) alla posizione specificata e gli aggiunge
+         * un'etichetta numerica centrata. Registra l'elemento nell'array
+         * `nodes` per poterne gestire posizione e eventi in seguito.
+         */
         function createNode(x, y) {
             const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            const nodeNumber = nodeIdCounter;
             const id = `node-${nodeIdCounter++}`;
             
             circle.setAttribute("cx", x);
             circle.setAttribute("cy", y);
-            circle.setAttribute("r", 20);
+            circle.setAttribute("r", NODE_RADIUS);
             circle.setAttribute("class", "node");
             circle.setAttribute("id", id);
 
-            // Eventi specifici del nodo
+            // Crea il testo con il numero
+            const label = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            label.setAttribute("x", x);
+            label.setAttribute("y", y);
+            label.setAttribute("class", "node-label");
+            label.textContent = nodeNumber;
+
+            // Eventi mouse sul nodo
+            // - mousedown: avvia drag per spostamento o per creazione arco
             circle.addEventListener('mousedown', (e) => handleNodeMouseDown(e, id));
             
-            // Eventi per l'illuminazione del target durante il drag dell'arco
+            // - mouseenter/mouseleave: quando si sta creando un arco tramite
+            //   drag, evidenziamo i possibili target con classe `target-hover`
             circle.addEventListener('mouseenter', (e) => {
                 if (isDraggingEdge && edgeStartNodeDOM !== e.target) {
                    hoveredTargetNodeDOM = e.target;
@@ -213,48 +386,128 @@
             });
 
             nodesLayer.appendChild(circle);
-            nodes.push({ id: id, x: x, y: y, el: circle });
+            nodesLayer.appendChild(label);
+            nodes.push({ id, x, y, el: circle, label: label });
         }
 
-        // Crea un arco vero
+        // Creazione di un arco orientato tra due nodi
+        // sourceId, targetId: id dei nodi (es. 'node-0')
         function createEdge(sourceId, targetId) {
-            if (sourceId === targetId) return; // No auto-loop
+            // Non creiamo self-loop
+            if (sourceId === targetId) return; 
 
-            // Controllo se esiste già (opzionale, ma utile)
-            const exists = edges.some(e => (e.source === sourceId && e.target === targetId) || (e.source === targetId && e.target === sourceId));
-            if(exists) return;
+            // Evitiamo duplicati esatti (A->B già esistente)
+            const exists = edges.some(e => e.source === sourceId && e.target === targetId);
+            if (exists) return;
 
-            const sourceNodeData = nodes.find(n => n.id === sourceId);
-            const targetNodeData = nodes.find(n => n.id === targetId);
+            // Recupero dei nodi coinvolti
+            const sourceNode = nodes.find(n => n.id === sourceId);
+            const targetNode = nodes.find(n => n.id === targetId);
 
+            // Calcolo vettore dalla sorgente alla destinazione e sua norma
+            // Questo ci permette di posizionare la linea non al centro del
+            // cerchio ma sul bordo (a raggio di distanza dal centro).
+            const dx = targetNode.x - sourceNode.x;
+            const dy = targetNode.y - sourceNode.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            const ux = dx / dist;
+            const uy = dy / dist;
+
+            // Punti di attacco della linea sul bordo dei cerchi
+            const x1 = sourceNode.x + ux * NODE_RADIUS;
+            const y1 = sourceNode.y + uy * NODE_RADIUS;
+            const x2 = targetNode.x - ux * NODE_RADIUS;
+            const y2 = targetNode.y - uy * NODE_RADIUS;
+
+            // Linea visibile
             const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-            
-            line.setAttribute("x1", sourceNodeData.x);
-            line.setAttribute("y1", sourceNodeData.y);
-            line.setAttribute("x2", targetNodeData.x);
-            line.setAttribute("y2", targetNodeData.y);
+            line.setAttribute("x1", x1);
+            line.setAttribute("y1", y1);
+            line.setAttribute("x2", x2);
+            line.setAttribute("y2", y2);
             line.setAttribute("class", "edge");
+            // Marker freccia per indicare direzione
+            line.setAttribute("marker-end", "url(#arrowhead)");
 
+            // ID leggibile per l'arco
+            const edgeId = `edge-${sourceId}-${targetId}`;
+            line.setAttribute("id", edgeId);
+
+            // Edge hit area: linea invisibile più spessa che cattura eventi mouse
+            // (migliora la sensibilità dell'hover e i click vicino alla linea)
+            const hitArea = document.createElementNS("http://www.w3.org/2000/svg", "line");
+            hitArea.setAttribute("x1", x1);
+            hitArea.setAttribute("y1", y1);
+            hitArea.setAttribute("x2", x2);
+            hitArea.setAttribute("y2", y2);
+            hitArea.setAttribute("class", "edge-hitarea");
+            hitArea.setAttribute("data-edge-id", edgeId);
+
+            // Eventi: hover sulla hit area aggiunge la classe 'hover' alla linea
+            // visibile (che applica lo stile di evidenziazione). Il click apre
+            // il pannello delle impostazioni solo se non siamo in modalità
+            // di creazione (currentMode === null).
+            hitArea.addEventListener('mouseenter', () => line.classList.add('hover'));
+            hitArea.addEventListener('mouseleave', () => line.classList.remove('hover'));
+            hitArea.addEventListener('click', (e) => {
+                if (currentMode === null) {
+                    e.stopPropagation();
+                    showFloatingPanel(e.clientX, e.clientY, 'edge', edgeId);
+                }
+            });
+
+            // Aggiunta ai layer: prima la linea visibile poi la hit area
             edgesLayer.appendChild(line);
-            edges.push({ source: sourceId, target: targetId, el: line });
+            edgesLayer.appendChild(hitArea);
+
+            // Memorizziamo i riferimenti per aggiornamenti futuri (es. quando
+            // i nodi vengono trascinati e dobbiamo riposizionare l'arco)
+            edges.push({ source: sourceId, target: targetId, el: line, hitArea: hitArea, id: edgeId });
         }
 
-        // Aggiorna posizione archi collegati a un nodo che si sposta
         function updateEdgesForNode(nodeId, newX, newY) {
+            // Aggiorna le coordinate di tutte le linee che coinvolgono nodi
+            // perché quando un nodo si muove gli archi devono riagganciarsi
+            // correttamente ai nuovi punti sui bordi dei cerchi.
             edges.forEach(edge => {
-                if (edge.source === nodeId) {
-                    edge.el.setAttribute("x1", newX);
-                    edge.el.setAttribute("y1", newY);
-                } else if (edge.target === nodeId) {
-                    edge.el.setAttribute("x2", newX);
-                    edge.el.setAttribute("y2", newY);
+                const sourceNode = nodes.find(n => n.id === edge.source);
+                const targetNode = nodes.find(n => n.id === edge.target);
+                
+                const dx = targetNode.x - sourceNode.x;
+                const dy = targetNode.y - sourceNode.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                
+                if (dist > 0) {
+                    const ux = dx / dist;
+                    const uy = dy / dist;
+
+                    // Calcolo dei punti sul bordo dei cerchi (compensando il raggio)
+                    const x1 = sourceNode.x + ux * NODE_RADIUS;
+                    const y1 = sourceNode.y + uy * NODE_RADIUS;
+                    const x2 = targetNode.x - ux * NODE_RADIUS;
+                    const y2 = targetNode.y - uy * NODE_RADIUS;
+
+                    // Aggiorna la linea visibile
+                    edge.el.setAttribute("x1", x1);
+                    edge.el.setAttribute("y1", y1);
+                    edge.el.setAttribute("x2", x2);
+                    edge.el.setAttribute("y2", y2);
+                    
+                    // Aggiorna la hit area (se presente) in modo che la zona di
+                    // interazione segua la linea aggiornata
+                    if (edge.hitArea) {
+                        edge.hitArea.setAttribute("x1", x1);
+                        edge.hitArea.setAttribute("y1", y1);
+                        edge.hitArea.setAttribute("x2", x2);
+                        edge.hitArea.setAttribute("y2", y2);
+                    }
                 }
             });
         }
 
-        // --- EVENT HANDLERS PRINCIPALI ---
+        // --- HANDLERS ---
 
-        // Click sullo sfondo (Solo per creare nodi)
+        // 1. Click su sfondo -> Crea Nodo
         svgCanvas.addEventListener('mousedown', (e) => {
             if (e.target.id === 'svg-canvas' && currentMode === 'addNode') {
                 const pos = getMousePosition(e);
@@ -262,65 +515,67 @@
             }
         });
 
-        // Mouse Down sul NODO (Inizio spostamento O Inizio creazione arco)
+        // 2. Click su Nodo -> Inizia Drag (Arco o Nodo) o mostra pannello
         function handleNodeMouseDown(e, nodeId) {
-            e.stopPropagation(); // Importante
-
+            e.stopPropagation(); 
             const nodeDOM = e.target;
             const nodeData = nodes.find(n => n.id === nodeId);
 
             if (currentMode === 'addEdge') {
-                // --- INIZIO DRAG ARCO ---
+                // Inizia creazione arco
                 isDraggingEdge = true;
                 edgeStartNodeDOM = nodeDOM;
                 
-                // Crea la linea temporanea
                 tempEdgeLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
                 tempEdgeLine.setAttribute("x1", nodeData.x);
                 tempEdgeLine.setAttribute("y1", nodeData.y);
-                // L'estremità iniziale è uguale alla partenza all'inizio
                 tempEdgeLine.setAttribute("x2", nodeData.x);
                 tempEdgeLine.setAttribute("y2", nodeData.y);
                 tempEdgeLine.setAttribute("class", "drag-edge");
+                tempEdgeLine.setAttribute("marker-end", "url(#arrowhead-drag)");
+
                 dragLayer.appendChild(tempEdgeLine);
+                hideFloatingPanel();
 
             } else if (currentMode === null) {
-                // --- INIZIO SPOSTAMENTO NODO ---
+                // Inizia spostamento nodo (distingueremo click da drag nel mouseup)
                 draggedNodeData = nodeData;
+                draggedNodeData.startX = nodeData.x;
+                draggedNodeData.startY = nodeData.y;
                 nodeDOM.style.cursor = "grabbing";
+                hideFloatingPanel();
             }
         }
 
-        // Mouse Move Globale (Gestisce sia spostamento nodo che linea temporanea arco)
+        // 3. Mouse Move Globale -> Aggiorna posizioni
         window.addEventListener('mousemove', (e) => {
             const pos = getMousePosition(e);
 
             if (isDraggingEdge && tempEdgeLine) {
-                // Aggiorna la fine della linea temporanea dell'arco
                 tempEdgeLine.setAttribute("x2", pos.x);
                 tempEdgeLine.setAttribute("y2", pos.y);
-
             } else if (draggedNodeData && currentMode === null) {
-                // Sposta il nodo
                 draggedNodeData.x = pos.x;
                 draggedNodeData.y = pos.y;
                 draggedNodeData.el.setAttribute("cx", pos.x);
                 draggedNodeData.el.setAttribute("cy", pos.y);
-
-                // Aggiorna gli archi collegati
+                // Aggiorna anche la posizione del label
+                if (draggedNodeData.label) {
+                    draggedNodeData.label.setAttribute("x", pos.x);
+                    draggedNodeData.label.setAttribute("y", pos.y);
+                }
                 updateEdgesForNode(draggedNodeData.id, pos.x, pos.y);
             }
         });
 
-        // Mouse Up Globale (Fine operazioni)
-        window.addEventListener('mouseup', () => {
-            // --- FINE DRAG ARCO ---
+        // 4. Mouse Up Globale -> Finalizza
+        window.addEventListener('mouseup', (e) => {
             if (isDraggingEdge) {
-                // Se abbiamo rilasciato su un nodo valido illuminato
+                // Se rilascio su un target valido
                 if (hoveredTargetNodeDOM && hoveredTargetNodeDOM !== edgeStartNodeDOM) {
                     createEdge(edgeStartNodeDOM.id, hoveredTargetNodeDOM.id);
                 }
-
+                
                 // Pulizia
                 if (tempEdgeLine) dragLayer.removeChild(tempEdgeLine);
                 if (hoveredTargetNodeDOM) hoveredTargetNodeDOM.classList.remove('target-hover');
@@ -331,10 +586,61 @@
                 hoveredTargetNodeDOM = null;
             }
 
-            // --- FINE SPOSTAMENTO NODO ---
             if (draggedNodeData) {
                 draggedNodeData.el.style.cursor = "grab";
+                
+                // Distinguo click da drag: se non si è mosso, è un click
+                const movedDistance = Math.sqrt(
+                    Math.pow(draggedNodeData.x - draggedNodeData.startX, 2) +
+                    Math.pow(draggedNodeData.y - draggedNodeData.startY, 2)
+                );
+                
+                if (movedDistance < 5 && currentMode === null) {
+                    // È un click, mostra il pannello
+                    showFloatingPanel(e.clientX, e.clientY, 'node', draggedNodeData.id);
+                }
+                
                 draggedNodeData = null;
+            }
+        });
+
+        // --- PANNELLO FLOTTANTE ---
+
+        function showFloatingPanel(clientX, clientY, type, id) {
+            selectedElement = { type, id };
+            
+            // Posiziona il pannello vicino al click
+            const containerRect = document.getElementById('graph-container').getBoundingClientRect();
+            let panelX = clientX - containerRect.left + 10;
+            let panelY = clientY - containerRect.top + 10;
+            
+            // Evita che esca dallo schermo
+            floatingPanel.style.left = panelX + 'px';
+            floatingPanel.style.top = panelY + 'px';
+            floatingPanel.classList.add('visible');
+            
+            // Aggiorna titolo
+            const titleEl = floatingPanel.querySelector('.panel-title');
+            titleEl.textContent = type === 'node' ? `Nodo: ${id}` : `Arco: ${id}`;
+        }
+
+        function hideFloatingPanel() {
+            floatingPanel.classList.remove('visible');
+            selectedElement = null;
+        }
+
+        function panelOptionClick(optionNum) {
+            if (selectedElement) {
+                console.log(`Opzione ${optionNum} selezionata per ${selectedElement.type}: ${selectedElement.id}`);
+                // Qui puoi aggiungere la logica per ogni opzione
+            }
+            hideFloatingPanel();
+        }
+
+        // Chiudi pannello cliccando fuori
+        document.addEventListener('mousedown', (e) => {
+            if (!floatingPanel.contains(e.target) && !e.target.classList.contains('node') && !e.target.classList.contains('edge')) {
+                hideFloatingPanel();
             }
         });
 
