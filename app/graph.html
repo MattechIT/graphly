@@ -1,38 +1,24 @@
 <!DOCTYPE html>
-<!--
-    Interfaccia minimale per creare e manipolare un grafo orientato.
-
-    Contenuto:
-    - CSS per lo stile della toolbar, area grafica, nodi e archi
-    - SVG per il rendering dei nodi/archi e marker delle frecce
-    - JavaScript per gestire modalita' (aggiungi nodo, aggiungi arco),
-        drag & drop dei nodi, creazione archi, evidenziazione e pannello
-        flottante per le impostazioni degli elementi.
-
-    Tutti i commenti in questo file sono in italiano e spiegano in modo
-    approfondito le parti principali per facilitarne la manutenzione.
--->
 <html lang="it">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
-    <!-- Carica il foglio di stile principales -->
-    <link rel="stylesheet" href="style.css">
-    <!-- Carica il bootstrap dei moduli ES -->
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Load bootstrap ES modules -->
     <script type="module" src="js/index.js"></script>
     <title>Graphly - Algorithm Visualizer</title>
 </head>
 <body>
-    <!-- Barra degli strumenti -->
+    <!-- Toolbar -->
     <nav id="toolbar" role="navigation" aria-label="Toolbar">
-        <img id="logo" src="logo.png" alt="Graph Logo" />
+        <img id="logo" src="../logo.png" alt="Graph Logo" />
         <button id="btn-add-node" type="button">Add Node</button>
         <button id="btn-add-edge" type="button">Add Edge</button>
         <span id="info" role="status" aria-live="polite">Current Mode: Move</span>
     </nav>
     
-    <!-- Contenitore principale del grafo -->
+    <!-- Graph container -->
     <main id="main" role="main">
         <div id="graph-container">
             <svg id="svg-canvas">
@@ -53,7 +39,7 @@
                 <g id="drag-layer"></g>
             </svg>
 
-            <!-- Pannello Flottante -->
+            <!-- Floating panel -->
             <div id="floating-panel" role="dialog" aria-hidden="true" aria-label="Element Settings">
                 <div class="panel-title">Settings</div>
                 <div class="panel-option" role="button" tabindex="0" data-option="1">Option 1</div>
