@@ -236,19 +236,49 @@ svg {
     display: block;
 }
 
+#btn-open-sidebar {
+    position: absolute;
+    top: 20px;
+    right: 0;
+    background-color: #34495e;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px 0 0 6px;
+    z-index: 14; /* Sotto la sidebar (15) ma sopra il grafo */
+    box-shadow: -2px 2px 5px rgba(0,0,0,0.2);
+    font-size: 14px;
+    cursor: pointer;
+}
+
+#btn-open-sidebar.hidden {
+    display: none;
+}
+
 /* SIDEBAR: Log degli algoritmi */
 #log-sidebar {
     width: 300px;
     background-color: white;
-    border-right: 2px solid #ecf0f1;
+    border-left: 2px solid #ecf0f1; /* Border ora a sinistra */
+    border-right: none;
     display: flex;
     flex-direction: column;
-    transition: transform 0.3s ease;
+    transition: width 0.3s ease, padding 0.3s ease; /* Smooth toggle */
     z-index: 15;
+    order: 2; /* Sposta visivamente a destra del graph-container */
 }
 
 #log-sidebar.hidden {
     display: none;
+}
+
+#graph-container {
+    order: 1; /* Assicura che il grafo stia a sinistra */
+}
+
+/* Stato toolbar disabilitato */
+#toolbar.disabled {
+    opacity: 0.6;
+    pointer-events: none; /* Disabilita click su tutto */
 }
 
 .sidebar-header {
