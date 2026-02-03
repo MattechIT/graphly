@@ -13,13 +13,31 @@
     <!-- Toolbar -->
     <nav id="toolbar" role="navigation" aria-label="Toolbar">
         <img id="logo" src="res/logo.png" alt="Graph Logo" />
-        <button id="btn-add-node" type="button">Add Node</button>
-        <button id="btn-add-edge" type="button">Add Edge</button>
+        <div class="toolbar-group">
+            <button id="btn-add-node" class="btn-edit" type="button">Add Node</button>
+            <button id="btn-add-edge" class="btn-edit" type="button">Add Edge</button>
+        </div>
+        <div class="toolbar-divider"></div>
+        <div class="toolbar-group">
+            <button id="btn-dijkstra" class="btn-alg" type="button">Dijkstra</button>
+            <button id="btn-kruskal" class="btn-alg" type="button">Kruskal</button>
+            <button id="btn-ford-fulkerson" class="btn-alg" type="button">Ford-Fulkerson</button>
+        </div>
         <span id="info" role="status" aria-live="polite">Current Mode: Move</span>
     </nav>
     
     <!-- Graph container -->
     <main id="main" role="main">
+        <aside id="log-sidebar" class="hidden">
+            <div class="sidebar-header">
+                <h3>Algorithm Log</h3>
+                <button id="btn-close-sidebar">&times;</button>
+            </div>
+            <ul id="log-list">
+                <!-- Log entries will be added here -->
+            </ul>
+        </aside>
+
         <div id="graph-container">
             <svg id="svg-canvas">
                 <defs>
@@ -45,6 +63,19 @@
                 <div class="panel-option" role="button" tabindex="0" data-option="1">Option 1</div>
                 <div class="panel-option" role="button" tabindex="0" data-option="2">Option 2</div>
                 <div class="panel-option" role="button" tabindex="0" data-option="3">Option 3</div>
+            </div>
+
+            <!-- Player Bar -->
+            <div id="player-bar" class="hidden">
+                <div class="player-controls">
+                    <button id="player-back" title="Back">Step Back</button>
+                    <button id="player-play" title="Play/Pause">Play</button>
+                    <button id="player-next" title="Next">Step Forward</button>
+                    <button id="player-stop" title="Stop">Stop</button>
+                </div>
+                <div class="player-info">
+                    <span id="player-step-info">Step: 0/0</span>
+                </div>
             </div>
         </div>
     </main>
