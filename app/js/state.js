@@ -4,10 +4,9 @@ export const state = {
     currentMode: null,
 
     // Collezioni
-    nodes: [], // { id, x, y, el, label }
-    // edges: array of edge objects. Each edge may include optional numeric
-    // properties `weight` and `capacity` used by graph algorithms.
-    // Example: { source, target, el, hitArea, id, weight, capacity }
+    // nodes: { id, x, y, el, labelEl, userLabel, algLabel }
+    nodes: [], 
+    // edges: { id, source, target, el, hitArea, weight, capacity, flow, isSaturated }
     edges: [],
 
     // Contatori
@@ -21,5 +20,12 @@ export const state = {
     hoveredTargetNodeDOM: null,
 
     // Pannello flottante
-    selectedElement: null
+    selectedElement: null,
+
+    // [NUOVO] Stato Algoritmi e Player
+    isAlgorithmRunning: false,
+    algorithmSteps: [],
+    currentStepIndex: -1,
+    playbackPaused: true,
+    playbackTimer: null
 };
