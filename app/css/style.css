@@ -33,16 +33,6 @@ body {
     margin: 0 8px;
 }
 
-.btn-edit {
-    background-color: #ecf0f1 !important;
-    color: #2c3e50 !important;
-}
-
-.btn-edit:hover {
-    background-color: #45627d !important;
-    color: #ecf0f1 !important;
-}
-
 .btn-alg {
     background-color: #e3961a !important;
     color: #ecf0f1 !important;
@@ -191,6 +181,21 @@ svg {
     stroke-width: 12px; /* larghezza di sensibilità: aumentare per più tolleranza */
     pointer-events: stroke;
     cursor: pointer;
+}
+
+.edge-label {
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 15px;
+    font-weight: bold;
+    fill: #2c3e50;
+    pointer-events: none;
+    user-select: none;
+    /* Un leggero contorno bianco per far risaltare il testo sugli archi */
+    paint-order: stroke;
+    stroke: #ffffff;
+    stroke-width: 3px;
+    stroke-linecap: round;
+    stroke-linejoin: round;
 }
 
 /* Stato visivo quando l'arco è evidenziato (hover) */
@@ -377,6 +382,47 @@ svg {
 
 #floating-panel .panel-option:hover {
     background-color: #ecf0f1;
+}
+
+#floating-panel .panel-row {
+    padding: 8px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+#floating-panel label {
+    font-size: 11px;
+    text-transform: uppercase;
+    color: #7f8c8d;
+    font-weight: bold;
+}
+
+#floating-panel input {
+    padding: 6px;
+    border: 1px solid #dcdde1;
+    border-radius: 4px;
+    font-size: 14px;
+    outline: none;
+}
+
+#floating-panel input:focus {
+    border-color: #3498db;
+}
+
+#floating-panel .panel-delete {
+    margin-top: 8px;
+    padding: 10px 12px;
+    cursor: pointer;
+    font-size: 13px;
+    color: #e74c3c;
+    border-top: 1px solid #ecf0f1;
+    transition: background-color 0.15s;
+    font-weight: 600;
+}
+
+#floating-panel .panel-delete:hover {
+    background-color: #fdf2f2;
 }
 
 #floating-panel .panel-option:active {
