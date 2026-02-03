@@ -5,8 +5,22 @@ export const edgesLayer = document.getElementById('edges-layer');
 export const dragLayer = document.getElementById('drag-layer');
 export const btnAddNode = document.getElementById('btn-add-node');
 export const btnAddEdge = document.getElementById('btn-add-edge');
+export const btnDijkstra = document.getElementById('btn-dijkstra');
+export const btnKruskal = document.getElementById('btn-kruskal');
+export const btnFordFulkerson = document.getElementById('btn-ford-fulkerson');
 export const infoText = document.getElementById('info');
 export const floatingPanel = document.getElementById('floating-panel');
+
+// New UI Elements
+export const logSidebar = document.getElementById('log-sidebar');
+export const btnCloseSidebar = document.getElementById('btn-close-sidebar');
+export const logList = document.getElementById('log-list');
+export const playerBar = document.getElementById('player-bar');
+export const btnPlayerBack = document.getElementById('player-back');
+export const btnPlayerPlay = document.getElementById('player-play');
+export const btnPlayerNext = document.getElementById('player-next');
+export const btnPlayerStop = document.getElementById('player-stop');
+export const playerStepInfo = document.getElementById('player-step-info');
 
 export function getMousePosition(evt) {
     const rect = svgCanvas.getBoundingClientRect();
