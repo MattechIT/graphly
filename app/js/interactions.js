@@ -26,9 +26,14 @@ export function init() {
             state.draggedNodeData.y = pos.y;
             state.draggedNodeData.el.setAttribute('cx', pos.x);
             state.draggedNodeData.el.setAttribute('cy', pos.y);
-            if (state.draggedNodeData.label) {
-                state.draggedNodeData.label.setAttribute('x', pos.x);
-                state.draggedNodeData.label.setAttribute('y', pos.y);
+            
+            if (state.draggedNodeData.labelEl) {
+                state.draggedNodeData.labelEl.setAttribute('x', pos.x);
+                state.draggedNodeData.labelEl.setAttribute('y', pos.y);
+            }
+            if (state.draggedNodeData.algLabelEl) {
+                state.draggedNodeData.algLabelEl.setAttribute('x', pos.x);
+                state.draggedNodeData.algLabelEl.setAttribute('y', pos.y - 25); // NODE_RADIUS + 5
             }
             renderer.updateEdgesForNode(state.draggedNodeData.id);
         }
