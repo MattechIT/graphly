@@ -8,6 +8,7 @@ export const btnAddEdge = document.getElementById('btn-add-edge');
 export const btnDijkstra = document.getElementById('btn-dijkstra');
 export const btnKruskal = document.getElementById('btn-kruskal');
 export const btnFordFulkerson = document.getElementById('btn-ford-fulkerson');
+export const btnTestPlayer = document.getElementById('btn-test-player');
 export const infoText = document.getElementById('info');
 export const floatingPanel = document.getElementById('floating-panel');
 
