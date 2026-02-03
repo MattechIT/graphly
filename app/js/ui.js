@@ -43,7 +43,6 @@ export function showFloatingPanel(clientX, clientY, type, id) {
         const edge = state.edges.find(e => e.id === id);
         if (edge) {
             // Unico input "Value" che imposta sia peso che capacità
-            // Usiamo edge.weight come valore visualizzato di default
             const rowValue = createInputRow('Value', 'number', edge.weight, (val) => {
                 const num = parseInt(val, 10) || 0;
                 edge.weight = num;
@@ -132,117 +131,83 @@ export function updateUI() {
 }
 
 // Chiudi pannello cliccando fuori
-
 document.addEventListener('mousedown', (e) => {
-
     if (!floatingPanel) return;
-
     if (!floatingPanel.classList.contains('visible')) return;
 
-
-
     const target = e.target;
-
     // Verifica se il click è dentro il pannello o su un nodo/arco
-
     const clickedOnNode = target.classList && target.classList.contains('node');
-
     const clickedOnEdge = target.classList && (target.classList.contains('edge') || target.classList.contains('edge-hitarea'));
-
     const isPanelClick = floatingPanel.contains(target);
 
-
-
     if (!isPanelClick && !clickedOnNode && !clickedOnEdge) {
-
         hideFloatingPanel();
-
     }
-
 });
-
-
 
 // --- GUI ALGORITMI ---
 
-
-
 export function toggleSidebar(show) {
-
     const sidebar = document.getElementById('log-sidebar');
-
-    if (show) sidebar.classList.remove('hidden');
-
-    else sidebar.classList.add('hidden');
-
+    const btnOpen = document.getElementById('btn-open-sidebar');
+    
+    if (show) {
+        sidebar.classList.remove('hidden');
+        btnOpen.classList.add('hidden');
+    } else {
+        sidebar.classList.add('hidden');
+        // Mostra il bottone solo se siamo in modalità algoritmo
+        if (state.isAlgorithmRunning) {
+            btnOpen.classList.remove('hidden');
+        }
+    }
 }
 
-
+function toggleSidebarButton(show) {
+    const btnOpen = document.getElementById('btn-open-sidebar');
+    if (show) btnOpen.classList.remove('hidden');
+    else btnOpen.classList.add('hidden');
+}
 
 // Passa dalla modalità Editor alla modalità Esecuzione Algoritmo
-
 export function setAlgorithmMode(active) {
-
     state.isAlgorithmRunning = active;
-
     state.currentMode = null; // Disabilita strumenti di edit
-
     updateUI(); // Aggiorna stato bottoni toolbar
 
-
-
     const toolbar = document.getElementById('toolbar');
-
     const playerBar = document.getElementById('player-bar');
-
     const logSidebar = document.getElementById('log-sidebar');
 
-
-
     if (active) {
-
         // Nascondi toolbar editor, mostra player e log
-
         toolbar.style.display = 'none';
-
         playerBar.classList.remove('hidden');
-
         logSidebar.classList.remove('hidden');
-
         hideFloatingPanel();
-
     } else {
-
         // Torna normale
-
         toolbar.style.display = 'flex';
-
         playerBar.classList.add('hidden');
-
         logSidebar.classList.add('hidden');
-
         
-
+        // Nascondi anche eventuale linguetta di riapertura
+        toggleSidebarButton(false);
+        
         // Pulisce log e stato
-
         document.getElementById('log-list').innerHTML = '';
-
         import('./renderer.js').then(r => {
-
              // Reset visuali qui se necessario in futuro
-
         });
-
     }
-
 }
 
-
-
 // Gestione click bottone chiusura sidebar
-
 document.getElementById('btn-close-sidebar')?.addEventListener('click', () => {
-
     toggleSidebar(false);
+});
 
+document.getElementById('btn-open-sidebar')?.addEventListener('click', () => {
+    toggleSidebar(true);
 });
