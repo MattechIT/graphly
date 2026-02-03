@@ -5,16 +5,97 @@ import { floatingPanel, infoText, btnAddNode, btnAddEdge, svgCanvas } from './do
 export function showFloatingPanel(clientX, clientY, type, id) {
     state.selectedElement = { type, id };
 
-    const containerRect = document.getElementById('graph-container').getBoundingClientRect();
+    const container = document.getElementById('graph-container');
+    if (!container) return; // Safety check
+    const containerRect = container.getBoundingClientRect();
+    
     let panelX = clientX - containerRect.left + 10;
     let panelY = clientY - containerRect.top + 10;
 
+    // Boundary checks
+    if (panelX + 180 > containerRect.width) panelX = containerRect.width - 190;
+    if (panelY + 150 > containerRect.height) panelY = containerRect.height - 160;
+
     floatingPanel.style.left = panelX + 'px';
     floatingPanel.style.top = panelY + 'px';
-    floatingPanel.classList.add('visible');
+    
+    // Pulisce completamente il contenuto precedente
+    floatingPanel.innerHTML = '';
 
-    const titleEl = floatingPanel.querySelector('.panel-title');
-    titleEl.textContent = type === 'node' ? `Nodo: ${id}` : `Arco: ${id}`;
+    // Titolo
+    const titleDiv = document.createElement('div');
+    titleDiv.className = 'panel-title';
+    titleDiv.textContent = type === 'node' ? 'Node Properties' : 'Edge Properties';
+    floatingPanel.appendChild(titleDiv);
+    
+    if (type === 'node') {
+        const node = state.nodes.find(n => n.id === id);
+        if (node) {
+            const row = createInputRow('Name', 'text', node.userLabel, (val) => {
+                node.userLabel = val.substring(0, 2);
+                import('./renderer.js').then(r => r.updateNodeVisuals(node));
+            }, 2);
+            floatingPanel.appendChild(row);
+            
+            addDeleteButton(() => import('./renderer.js').then(r => r.removeNode(id)));
+        }
+    } else if (type === 'edge') {
+        const edge = state.edges.find(e => e.id === id);
+        if (edge) {
+            // Unico input "Value" che imposta sia peso che capacità
+            // Usiamo edge.weight come valore visualizzato di default
+            const rowValue = createInputRow('Value', 'number', edge.weight, (val) => {
+                const num = parseInt(val, 10) || 0;
+                edge.weight = num;
+                edge.capacity = num;
+                import('./renderer.js').then(r => r.updateEdgeVisuals(edge));
+            });
+            floatingPanel.appendChild(rowValue);
+            
+            addDeleteButton(() => import('./renderer.js').then(r => r.removeEdge(id)));
+        }
+    }
+
+    floatingPanel.classList.add('visible');
+    
+    // Focus automatico sul primo input
+    setTimeout(() => {
+        const firstInput = floatingPanel.querySelector('input');
+        if (firstInput) firstInput.focus();
+    }, 50);
+}
+
+function createInputRow(label, type, value, onChange, maxlength = null) {
+    const container = document.createElement('div');
+    container.className = 'panel-row';
+    
+    const labelEl = document.createElement('label');
+    labelEl.textContent = label;
+    
+    const input = document.createElement('input');
+    input.type = type;
+    input.value = value;
+    if (maxlength) input.maxLength = maxlength;
+    
+    input.addEventListener('input', (e) => onChange(e.target.value));
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') hideFloatingPanel();
+    });
+
+    container.appendChild(labelEl);
+    container.appendChild(input);
+    return container;
+}
+
+function addDeleteButton(onDelete) {
+    const btn = document.createElement('div');
+    btn.className = 'panel-delete';
+    btn.textContent = 'Delete Element';
+    btn.onclick = () => {
+        onDelete();
+        hideFloatingPanel();
+    };
+    floatingPanel.appendChild(btn);
 }
 
 export function hideFloatingPanel() {
@@ -22,10 +103,7 @@ export function hideFloatingPanel() {
     state.selectedElement = null;
 }
 
-export function panelOptionClick(optionNum) {
-    if (state.selectedElement) {
-        console.log(`Opzione ${optionNum} selezionata per ${state.selectedElement.type}: ${state.selectedElement.id}`);
-    }
+export function panelOptionClick(action) {
     hideFloatingPanel();
 }
 
@@ -53,17 +131,118 @@ export function updateUI() {
     }
 }
 
-// Chiudi pannello cliccando fuori (gestione globale per comodità)
+// Chiudi pannello cliccando fuori
+
 document.addEventListener('mousedown', (e) => {
-    // Se il pannello non è visibile, non fare nulla
+
     if (!floatingPanel) return;
+
     if (!floatingPanel.classList.contains('visible')) return;
 
+
+
     const target = e.target;
+
+    // Verifica se il click è dentro il pannello o su un nodo/arco
+
     const clickedOnNode = target.classList && target.classList.contains('node');
+
     const clickedOnEdge = target.classList && (target.classList.contains('edge') || target.classList.contains('edge-hitarea'));
 
-    if (!floatingPanel.contains(target) && !clickedOnNode && !clickedOnEdge) {
+    const isPanelClick = floatingPanel.contains(target);
+
+
+
+    if (!isPanelClick && !clickedOnNode && !clickedOnEdge) {
+
         hideFloatingPanel();
+
     }
+
+});
+
+
+
+// --- GUI ALGORITMI ---
+
+
+
+export function toggleSidebar(show) {
+
+    const sidebar = document.getElementById('log-sidebar');
+
+    if (show) sidebar.classList.remove('hidden');
+
+    else sidebar.classList.add('hidden');
+
+}
+
+
+
+// Passa dalla modalità Editor alla modalità Esecuzione Algoritmo
+
+export function setAlgorithmMode(active) {
+
+    state.isAlgorithmRunning = active;
+
+    state.currentMode = null; // Disabilita strumenti di edit
+
+    updateUI(); // Aggiorna stato bottoni toolbar
+
+
+
+    const toolbar = document.getElementById('toolbar');
+
+    const playerBar = document.getElementById('player-bar');
+
+    const logSidebar = document.getElementById('log-sidebar');
+
+
+
+    if (active) {
+
+        // Nascondi toolbar editor, mostra player e log
+
+        toolbar.style.display = 'none';
+
+        playerBar.classList.remove('hidden');
+
+        logSidebar.classList.remove('hidden');
+
+        hideFloatingPanel();
+
+    } else {
+
+        // Torna normale
+
+        toolbar.style.display = 'flex';
+
+        playerBar.classList.add('hidden');
+
+        logSidebar.classList.add('hidden');
+
+        
+
+        // Pulisce log e stato
+
+        document.getElementById('log-list').innerHTML = '';
+
+        import('./renderer.js').then(r => {
+
+             // Reset visuali qui se necessario in futuro
+
+        });
+
+    }
+
+}
+
+
+
+// Gestione click bottone chiusura sidebar
+
+document.getElementById('btn-close-sidebar')?.addEventListener('click', () => {
+
+    toggleSidebar(false);
+
 });
