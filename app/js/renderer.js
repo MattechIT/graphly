@@ -215,6 +215,14 @@ export function updateEdgeGeometry(edge) {
 export function updateEdgeVisuals(edge) {
     const isFlowMode = state.isAlgorithmRunning; // Semplificazione per ora
     
+    // Gestione orientamento: se l'algoritmo è di tipo 'undirected', nascondiamo le frecce
+    const isUndirected = state.isAlgorithmRunning && state.selectedAlgorithm?.graphType === "undirected";
+    if (isUndirected) {
+        edge.el.removeAttribute("marker-end");
+    } else {
+        edge.el.setAttribute("marker-end", "url(#arrowhead)");
+    }
+
     if (edge.isSaturated) {
         edge.el.style.stroke = "#e74c3c";
         edge.el.style.strokeWidth = "4px";
