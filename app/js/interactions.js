@@ -95,6 +95,11 @@ export function handleNodeMouseDown(e, nodeId) {
     const nodeDOM = e.target;
     const nodeData = state.nodes.find(n => n.id === nodeId);
 
+    if (state.currentMode === 'selectSource') {
+        ui.runAlgorithm({ sourceNode: nodeId });
+        return;
+    }
+
     if (state.currentMode === 'addEdge') {
         state.isDraggingEdge = true;
         state.edgeStartNodeDOM = nodeDOM;
