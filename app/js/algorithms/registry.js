@@ -1,4 +1,5 @@
 import * as Dijkstra from './dijkstra.js';
+import * as Kruskal from './kruskal.js';
 
 // Mappa centrale degli algoritmi disponibili
 // La chiave è l'ID dell'algoritmo
@@ -6,6 +7,10 @@ export const AlgorithmRegistry = {
     [Dijkstra.metadata.id]: {
         ...Dijkstra.metadata,
         run: Dijkstra.run
+    },
+    [Kruskal.metadata.id]: {
+        ...Kruskal.metadata,
+        run: Kruskal.run
     }
 };
 
