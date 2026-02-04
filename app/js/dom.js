@@ -5,10 +5,7 @@ export const edgesLayer = document.getElementById('edges-layer');
 export const dragLayer = document.getElementById('drag-layer');
 export const btnAddNode = document.getElementById('btn-add-node');
 export const btnAddEdge = document.getElementById('btn-add-edge');
-export const btnDijkstra = document.getElementById('btn-dijkstra');
-export const btnKruskal = document.getElementById('btn-kruskal');
-export const btnFordFulkerson = document.getElementById('btn-ford-fulkerson');
-export const btnTestPlayer = document.getElementById('btn-test-player');
+export const algorithmContainer = document.getElementById('algorithm-container');
 export const infoText = document.getElementById('info');
 export const floatingPanel = document.getElementById('floating-panel');
 
