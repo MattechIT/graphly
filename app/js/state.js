@@ -27,5 +27,10 @@ export const state = {
     algorithmSteps: [],
     currentStepIndex: -1,
     playbackPaused: true,
-    playbackTimer: null
+    playbackTimer: null,
+    
+    // Stato selezione dinamica
+    selectedAlgorithm: null,
+    algorithmParams: {},
+    selectionStep: 0
 };

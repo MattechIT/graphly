@@ -95,8 +95,8 @@ export function handleNodeMouseDown(e, nodeId) {
     const nodeDOM = e.target;
     const nodeData = state.nodes.find(n => n.id === nodeId);
 
-    if (state.currentMode === 'selectSource') {
-        ui.runAlgorithm({ sourceNode: nodeId });
+    if (state.currentMode === 'selectSource' || state.currentMode === 'selectSink') {
+        ui.handleSelection(nodeId);
         return;
     }
 

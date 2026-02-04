@@ -205,15 +205,46 @@ export function setAlgorithmMode(active) {
 
 export function handleAlgorithmClick(algorithm) {
     state.selectedAlgorithm = algorithm;
+    state.algorithmParams = {}; // Reset previous params
 
-    if (algorithm.requires && algorithm.requires.includes('sourceNode')) {
-        setMode('selectSource');
-        // Info text aggiornato da updateUI o qui sotto
-        infoText.innerText = `Select a source node for ${algorithm.name}`;
-        svgCanvas.style.cursor = "pointer";
+    if (algorithm.requires && algorithm.requires.length > 0) {
+        // Start selection process with the first required parameter
+        startSelectionStep(0);
     } else {
-        // Nessun input richiesto (es. Kruskal)
+        // No input required
         runAlgorithm({});
+    }
+}
+
+function startSelectionStep(stepIndex) {
+    const paramName = state.selectedAlgorithm.requires[stepIndex];
+    state.selectionStep = stepIndex; // Track current step index
+    
+    // Map param name to UI mode and message
+    if (paramName === 'sourceNode') {
+        setMode('selectSource');
+        infoText.innerText = `Select a SOURCE node for ${state.selectedAlgorithm.name}`;
+    } else if (paramName === 'sinkNode') {
+        setMode('selectSink');
+        infoText.innerText = `Select a SINK node for ${state.selectedAlgorithm.name}`;
+    }
+    
+    svgCanvas.style.cursor = "pointer";
+}
+
+export function handleSelection(nodeId) {
+    const requiredParams = state.selectedAlgorithm.requires;
+    const currentParam = requiredParams[state.selectionStep];
+    
+    // Save selected value
+    state.algorithmParams[currentParam] = nodeId;
+    
+    // Check if more steps are needed
+    if (state.selectionStep + 1 < requiredParams.length) {
+        startSelectionStep(state.selectionStep + 1);
+    } else {
+        // All params collected
+        runAlgorithm(state.algorithmParams);
     }
 }
 
