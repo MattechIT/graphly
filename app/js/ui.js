@@ -173,8 +173,8 @@ function toggleSidebarButton(show) {
 // Passa dalla modalità Editor alla modalità Esecuzione Algoritmo
 export function setAlgorithmMode(active) {
     state.isAlgorithmRunning = active;
-    state.currentMode = null; // Disabilita strumenti di edit
-    updateUI(); // Aggiorna stato bottoni toolbar
+    state.currentMode = null;
+    updateUI();
 
     const toolbar = document.getElementById('toolbar');
     const playerBar = document.getElementById('player-bar');
@@ -200,6 +200,42 @@ export function setAlgorithmMode(active) {
         import('./renderer.js').then(r => {
              // Reset visuali qui se necessario in futuro
         });
+    }
+}
+
+export function handleAlgorithmClick(algorithm) {
+    state.selectedAlgorithm = algorithm;
+
+    if (algorithm.requires && algorithm.requires.includes('sourceNode')) {
+        setMode('selectSource');
+        // Info text aggiornato da updateUI o qui sotto
+        infoText.innerText = `Select a source node for ${algorithm.name}`;
+        svgCanvas.style.cursor = "pointer";
+    } else {
+        // Nessun input richiesto (es. Kruskal)
+        runAlgorithm({});
+    }
+}
+
+export function runAlgorithm(params) {
+    if (!state.selectedAlgorithm) return;
+    setAlgorithmMode(true);
+    state.currentMode = null; // Stop picking
+
+    // Deep copy dei dati per evitare modifiche dirette accidentali
+    const nodesCopy = JSON.parse(JSON.stringify(state.nodes));
+    const edgesCopy = JSON.parse(JSON.stringify(state.edges));
+
+    try {
+        const steps = state.selectedAlgorithm.run(nodesCopy, edgesCopy, params);
+        
+        import('./player.js').then(player => {
+            player.loadAlgorithm(steps);
+        });
+    } catch (e) {
+        console.error("Algorithm error:", e);
+        alert("Error running algorithm: " + e.message);
+        setAlgorithmMode(false);
     }
 }
 
