@@ -14,9 +14,11 @@ export const logSidebar = document.getElementById('log-sidebar');
 export const btnCloseSidebar = document.getElementById('btn-close-sidebar');
 export const logList = document.getElementById('log-list');
 export const playerBar = document.getElementById('player-bar');
+export const btnPlayerStart = document.getElementById('player-start');
 export const btnPlayerBack = document.getElementById('player-back');
 export const btnPlayerPlay = document.getElementById('player-play');
 export const btnPlayerNext = document.getElementById('player-next');
+export const btnPlayerEnd = document.getElementById('player-end');
 export const btnPlayerStop = document.getElementById('player-stop');
 export const playerStepInfo = document.getElementById('player-step-info');
 

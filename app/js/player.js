@@ -2,7 +2,9 @@ import { state } from './state.js';
 import * as ui from './ui.js';
 import * as renderer from './renderer.js';
 import { 
-    btnPlayerBack, btnPlayerPlay, btnPlayerNext, btnPlayerStop, playerStepInfo, logList 
+    btnPlayerBack, btnPlayerPlay, btnPlayerNext, btnPlayerStop, 
+    btnPlayerStart, btnPlayerEnd,
+    playerStepInfo, logList 
 } from './dom.js';
 
 // Configurazione Player
@@ -83,6 +85,41 @@ export function back() {
 
     // Riesegui velocemente fino allo step precedente
     for (let i = 0; i <= targetIndex; i++) {
+        state.currentStepIndex = i;
+        const step = state.algorithmSteps[i];
+        applyStep(step);
+        addLogEntry(step, i);
+    }
+    
+    updateControls();
+}
+
+// Torna all'inizio (resetta visualizzazione ma mantiene algoritmo caricato)
+export function goToStart() {
+    pause();
+    resetVisuals();
+    logList.innerHTML = '';
+    state.currentStepIndex = -1;
+    updateControls();
+}
+
+// Vai direttamente alla fine
+export function goToEnd() {
+    pause();
+    const total = state.algorithmSteps.length;
+    if (total === 0) return;
+
+    // Se siamo già alla fine, inutile rifare tutto
+    if (state.currentStepIndex >= total - 1) return;
+
+    // Esegui tutto velocemente senza delay
+    // Ottimizzazione: potremmo saltare il rendering intermedio, 
+    // ma per semplicità e correttezza (dipendenza incrementale) rieseguiamo applyStep
+    
+    // Se siamo all'inizio, partiamo da 0, altrimenti continuiamo da dove siamo
+    const startIndex = state.currentStepIndex + 1;
+    
+    for (let i = startIndex; i < total; i++) {
         state.currentStepIndex = i;
         const step = state.algorithmSteps[i];
         applyStep(step);
@@ -206,16 +243,19 @@ function updateControls() {
     
     playerStepInfo.textContent = `Step: ${currentDisplay} / ${total}`;
     
-    btnPlayerPlay.textContent = state.playbackPaused ? "Play" : "Pause";
+    // Toggle Play/Pause Icon
+    const playIcon = btnPlayerPlay.querySelector('.material-symbols-outlined');
+    if (playIcon) {
+        playIcon.textContent = state.playbackPaused ? "play_arrow" : "pause";
+    }
     
     // Se siamo all'inizio, Back disabilitato
     btnPlayerBack.disabled = state.currentStepIndex < 0;
+    btnPlayerStart.disabled = state.currentStepIndex < 0;
     
     // Se siamo alla fine, Next disabilitato
     btnPlayerNext.disabled = state.currentStepIndex >= total - 1;
-    
-    // Se è in play, disabilita Next manuale per evitare conflitti visivi rapidi (scelta UX opzionale)
-    // btnPlayerNext.disabled = !state.playbackPaused || btnPlayerNext.disabled;
+    btnPlayerEnd.disabled = state.currentStepIndex >= total - 1;
 }
 
 // --- EVENT LISTENERS ---
@@ -238,5 +278,13 @@ if (btnPlayerPlay) {
 
     btnPlayerStop.addEventListener('click', () => {
         stop();
+    });
+
+    btnPlayerStart.addEventListener('click', () => {
+        goToStart();
+    });
+
+    btnPlayerEnd.addEventListener('click', () => {
+        goToEnd();
     });
 }

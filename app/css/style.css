@@ -331,15 +331,16 @@ svg {
     bottom: 30px;
     left: 50%;
     transform: translateX(-50%);
-    background-color: #2c3e50;
+    background-color: rgba(44, 62, 80, 0.95); /* Leggermente trasparente */
+    backdrop-filter: blur(5px);
     color: white;
-    padding: 10px 20px;
-    border-radius: 40px;
+    padding: 10px 25px;
+    border-radius: 50px; /* Fully rounded */
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 8px;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
     z-index: 20;
     min-width: 320px;
 }
@@ -350,43 +351,72 @@ svg {
 
 .player-controls {
     display: flex;
-    gap: 15px;
+    gap: 12px;
+    align-items: center;
 }
 
-.player-controls button {
-    background-color: #ecf0f1;
-    color: #2c3e50;
-    border-radius: 20px;
-    padding: 6px 15px;
+/* Icon Buttons Style */
+.btn-icon {
+    background-color: transparent !important;
+    color: #ecf0f1 !important;
+    padding: 8px;
+    border-radius: 50%; /* Circle */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    transition: background-color 0.2s, transform 0.1s;
 }
 
-.player-controls button:hover {
-    background-color: #bdc3c7;
+.btn-icon:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    transform: scale(1.05);
 }
 
-#player-play {
-    background-color: #27ae60;
-    color: white;
-    min-width: 80px;
+.btn-icon:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    transform: none;
 }
 
-#player-play:hover {
-    background-color: #2ecc71;
+/* Play Button Special Style */
+.circle-btn {
+    width: 50px;
+    height: 50px;
+    background-color: #27ae60 !important;
+    box-shadow: 0 4px 10px rgba(39, 174, 96, 0.4);
+}
+
+.circle-btn:hover {
+    background-color: #2ecc71 !important;
+    transform: scale(1.1);
+}
+
+.circle-btn .material-symbols-outlined {
+    font-size: 32px; /* Bigger icon */
 }
 
 #player-stop {
-    background-color: #e74c3c;
-    color: white;
+    color: #e74c3c !important; /* Red icon */
 }
 
 #player-stop:hover {
-    background-color: #c0392b;
+    background-color: rgba(231, 76, 60, 0.1) !important;
+}
+
+.divider {
+    width: 1px;
+    height: 24px;
+    background-color: rgba(255, 255, 255, 0.2);
+    margin: 0 5px;
 }
 
 .player-info {
     font-size: 12px;
     color: #bdc3c7;
     font-family: monospace;
+    margin-top: 4px;
 }
 
 /* Utility per nascondere elementi */
