@@ -150,14 +150,20 @@ function applyStep(step) {
             if (change.flow !== undefined) edge.flow = change.flow;
             if (change.saturated !== undefined) edge.isSaturated = change.saturated;
             
+            // Sync base visuals (labels, saturation color) first
+            renderer.updateEdgeVisuals(edge);
+
             // Colore Temporaneo (es. evidenziato in giallo durante scansione)
             if (change.color) {
                 edge.el.style.stroke = change.color;
-            } else if (!edge.isSaturated) {
-                edge.el.style.stroke = ''; // Reset al default CSS
             }
 
-            renderer.updateEdgeVisuals(edge);
+            // Larghezza Temporanea (es. evidenziato in grassetto per path finale)
+            if (change.width) {
+                edge.el.style.strokeWidth = change.width + "px";
+            } else if (!edge.isSaturated) {
+                 edge.el.style.strokeWidth = ''; 
+            }
         });
     }
 }
