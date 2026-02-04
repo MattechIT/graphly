@@ -239,6 +239,10 @@ export function updateNodeVisuals(node) {
     node.algLabelEl.textContent = node.algLabel;
 }
 
+export function refreshAllEdgesVisuals() {
+    state.edges.forEach(edge => updateEdgeVisuals(edge));
+}
+
 export function removeEdge(edgeId) {
     const edgeIndex = state.edges.findIndex(e => e.id === edgeId);
     if (edgeIndex === -1) return;

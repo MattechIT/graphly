@@ -198,7 +198,7 @@ export function setAlgorithmMode(active) {
         // Pulisce log e stato
         document.getElementById('log-list').innerHTML = '';
         import('./renderer.js').then(r => {
-             // Reset visuali qui se necessario in futuro
+             r.refreshAllEdgesVisuals();
         });
     }
 }
