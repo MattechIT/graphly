@@ -5,11 +5,23 @@ import * as ui from './ui.js';
 
 const NS = "http://www.w3.org/2000/svg";
 
-export function createNode(x, y) {
+export function clearGraph() {
+    // Remove nodes and edges from DOM
+    while (nodesLayer.firstChild) nodesLayer.removeChild(nodesLayer.firstChild);
+    while (edgesLayer.firstChild) edgesLayer.removeChild(edgesLayer.firstChild);
+    while (dragLayer.firstChild) dragLayer.removeChild(dragLayer.firstChild);
+
+    // Reset state
+    state.nodes = [];
+    state.edges = [];
+}
+
+export function createNode(x, y, forcedId = null, forcedLabel = null) {
     const circle = document.createElementNS(NS, "circle");
-    const nodeIndex = state.nodeIdCounter;
-    const id = `node-${state.nodeIdCounter++}`;
-    const userLabelText = nodeIndex.toString();
+
+    // If forcedId is present (import), we use that, otherwise we increment the counter
+    const id = forcedId || `node-${state.nodeIdCounter++}`;
+    const userLabelText = forcedLabel || (forcedId ? forcedId.split('-')[1] : (state.nodeIdCounter - 1).toString());
 
     circle.setAttribute("cx", x);
     circle.setAttribute("cy", y);
@@ -51,11 +63,11 @@ export function createNode(x, y) {
     return nodeData;
 }
 
-export function createEdge(sourceId, targetId, opts = {}) {
+export function createEdge(sourceId, targetId, forcedWeight = null, forcedId = null) {
     const DEFAULT_VALUE = 1;
-    const weight = opts.weight ?? DEFAULT_VALUE;
-    const capacity = opts.capacity ?? DEFAULT_VALUE;
-    const flow = opts.flow ?? 0;
+    const weight = forcedWeight ?? DEFAULT_VALUE;
+    const capacity = weight;
+    const flow = 0;
 
     if (sourceId === targetId) return;
     const exists = state.edges.some(e => e.source === sourceId && e.target === targetId);
@@ -65,7 +77,7 @@ export function createEdge(sourceId, targetId, opts = {}) {
     const targetNode = state.nodes.find(n => n.id === targetId);
     if (!sourceNode || !targetNode) return;
 
-    const edgeId = `edge-${sourceId}-${targetId}`;
+    const edgeId = forcedId || `edge-${sourceId}-${targetId}`;
     
     // Gruppo per l'arco e la sua etichetta
     const group = document.createElementNS(NS, "g");
