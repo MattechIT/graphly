@@ -73,6 +73,36 @@ button:not(.active) {
     color: #34495e;
 }
 
+/* Pulsanti con Icona + Testo nella Toolbar */
+.btn-icon-text {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+}
+
+.btn-icon-text .material-symbols-outlined {
+    font-size: 20px;
+}
+
+#btn-save {
+    background-color: #3498db;
+    color: white;
+}
+
+#btn-save:hover {
+    background-color: #2980b9;
+}
+
+#btn-load {
+    background-color: #9b59b6;
+    color: white;
+}
+
+#btn-load:hover {
+    background-color: #8e44ad;
+}
+
 /* Contenitore principale del grafo (controlla la dimensione SVG)
     e fornisce eventuale texture di sfondo */
 #graph-container {

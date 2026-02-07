@@ -20,6 +20,18 @@
             <button id="btn-add-edge" class="btn-edit" type="button">Add Edge</button>
         </div>
         <div class="toolbar-divider"></div>
+        <div class="toolbar-group">
+            <button id="btn-save" class="btn-icon-text" title="Save Graph JSON">
+                <span class="material-symbols-outlined">save</span>
+                Save
+            </button>
+            <button id="btn-load" class="btn-icon-text" title="Load Graph JSON">
+                <span class="material-symbols-outlined">upload_file</span>
+                Load
+            </button>
+            <input type="file" id="input-load-file" accept=".json" style="display: none;">
+        </div>
+        <div class="toolbar-divider"></div>
         <div class="toolbar-group" id="algorithm-container">
             <!-- Buttons will be injected dynamically -->
         </div>
