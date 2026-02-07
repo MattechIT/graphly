@@ -5,9 +5,11 @@ import * as renderer from './renderer.js';
 import * as interactions from './interactions.js';
 import * as player from './player.js';
 import * as persistence from './persistence.js';
+import * as layout from './layout.js';
 import { 
     btnAddNode, btnAddEdge, 
     btnSave, btnLoad, inputLoadFile,
+    btnLayoutLayered, btnLayoutCompact, btnLayoutCircle, btnLayoutGrid,
     algorithmContainer
 } from './dom.js';
 import { getAlgorithmList } from './algorithms/registry.js';
@@ -28,6 +30,13 @@ btnAddEdge.addEventListener('click', () => ui.setMode('addEdge'));
 // Controlli Persistenza
 btnSave.addEventListener('click', () => persistence.exportGraph());
 btnLoad.addEventListener('click', () => inputLoadFile.click());
+
+// Controlli Layout
+btnLayoutLayered.addEventListener('click', () => layout.applyLayeredLayout());
+btnLayoutCompact.addEventListener('click', () => layout.applyCompactLayout());
+btnLayoutCircle.addEventListener('click', () => layout.applyCircleLayout());
+btnLayoutGrid.addEventListener('click', () => layout.applyGridLayout());
+
 inputLoadFile.addEventListener('change', (e) => {
     persistence.importGraph(e.target.files[0]);
     e.target.value = '';
