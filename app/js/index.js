@@ -4,8 +4,10 @@ import * as ui from './ui.js';
 import * as renderer from './renderer.js';
 import * as interactions from './interactions.js';
 import * as player from './player.js';
+import * as persistence from './persistence.js';
 import { 
     btnAddNode, btnAddEdge, 
+    btnSave, btnLoad, inputLoadFile,
     algorithmContainer
 } from './dom.js';
 import { getAlgorithmList } from './algorithms/registry.js';
@@ -22,6 +24,14 @@ ui.updateUI();
 // Controlli Toolbar
 btnAddNode.addEventListener('click', () => ui.setMode('addNode'));
 btnAddEdge.addEventListener('click', () => ui.setMode('addEdge'));
+
+// Controlli Persistenza
+btnSave.addEventListener('click', () => persistence.exportGraph());
+btnLoad.addEventListener('click', () => inputLoadFile.click());
+inputLoadFile.addEventListener('change', (e) => {
+    persistence.importGraph(e.target.files[0]);
+    e.target.value = '';
+});
 
 // Generazione Dinamica Pulsanti Algoritmi
 const algorithms = getAlgorithmList();
