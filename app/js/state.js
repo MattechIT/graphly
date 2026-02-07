@@ -11,6 +11,7 @@ export const state = {
 
     // Contatori
     nodeIdCounter: 0,
+    edgeIdCounter: 0,
 
     // Stato temporaneo di interazione
     draggedNodeData: null,
