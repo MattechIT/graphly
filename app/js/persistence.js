@@ -94,6 +94,7 @@ function syncIdCounters(nodes, edges) {
     });
 
     const edgeIds = edges.map(e => {
+        if (!e.id) return 0;
         const match = e.id.match(/\d+/);
         return match ? parseInt(match[0], 10) : 0;
     });
