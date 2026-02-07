@@ -70,11 +70,11 @@ function loadGraphData(data) {
 
     // Import elements
     data.nodes.forEach(n => {
-        const node = renderer.createNode(n.x, n.y, n.id, n.userLabel);
+        const node = renderer.createNode(n.x || 0, n.y || 0, n.id, n.userLabel || null);
         interactions.attachNodeListeners(node);
     });
     data.edges.forEach(e => {
-        renderer.createEdge(e.source, e.target, e.weight, e.id);
+        renderer.createEdge(e.source, e.target, e.weight || 1, e.id || null);
     });
 
     //Update ID counters

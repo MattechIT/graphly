@@ -16,12 +16,14 @@ export function clearGraph() {
     state.edges = [];
 }
 
-export function createNode(x, y, forcedId = null, forcedLabel = null) {
+export function createNode(x = 0, y = 0, forcedId = null, forcedLabel = null) {
     const circle = document.createElementNS(NS, "circle");
 
     // If forcedId is present (import), we use that, otherwise we increment the counter
     const id = forcedId || `node-${state.nodeIdCounter++}`;
-    const userLabelText = forcedLabel || (forcedId ? forcedId.split('-')[1] : (state.nodeIdCounter - 1).toString());
+    // If no forced Label, try get it from id
+    const defaultLabel = forcedId ? (forcedId.includes('-') ? forcedId.split('-')[1] : forcedId) : (state.nodeIdCounter - 1).toString();
+    const userLabelText = forcedLabel || defaultLabel;
 
     circle.setAttribute("cx", x);
     circle.setAttribute("cy", y);
