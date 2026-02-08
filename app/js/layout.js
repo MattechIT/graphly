@@ -165,6 +165,62 @@ export function applyGridLayout() {
 }
 
 /**
+ * Fits the entire graph into the current canvas view, scaling it down if necessary.
+ */
+export function centerGraph() {
+    if (state.nodes.length === 0) return;
+
+    const rect = svgCanvas.getBoundingClientRect();
+    const canvasWidth = rect.width;
+    const canvasHeight = rect.height;
+    const padding = 60;
+
+    if (canvasWidth <= 0 || canvasHeight <= 0) return;
+
+    // 1. Calculate current graph boundaries
+    let minX = Infinity, maxX = -Infinity;
+    let minY = Infinity, maxY = -Infinity;
+
+    state.nodes.forEach(n => {
+        minX = Math.min(minX, n.x);
+        maxX = Math.max(maxX, n.x);
+        minY = Math.min(minY, n.y);
+        maxY = Math.max(maxY, n.y);
+    });
+
+    let graphWidth = maxX - minX;
+    let graphHeight = maxY - minY;
+    
+    // Prevent division by zero for single nodes
+    if (graphWidth === 0) graphWidth = 1;
+    if (graphHeight === 0) graphHeight = 1;
+
+    // 2. Calculate scale factor to fit
+    const availableWidth = canvasWidth - 2 * padding;
+    const availableHeight = canvasHeight - 2 * padding;
+
+    // We only scale down if the graph is larger than the available space
+    const scaleX = availableWidth / graphWidth;
+    const scaleY = availableHeight / graphHeight;
+    const scale = Math.min(scaleX, scaleY, 1.0); // Never scale up (>1.0), only down
+
+    // 3. Calculate target center
+    const graphCenterX = minX + graphWidth / 2;
+    const graphCenterY = minY + graphHeight / 2;
+    const targetCenterX = canvasWidth / 2;
+    const targetCenterY = canvasHeight / 2;
+
+    // 4. Apply transformation: (pos - center) * scale + targetCenter
+    state.nodes.forEach(n => {
+        const newX = targetCenterX + (n.x - graphCenterX) * scale;
+        const newY = targetCenterY + (n.y - graphCenterY) * scale;
+        updateNodePos(n, newX, newY);
+    });
+
+    finalizeLayout();
+}
+
+/**
  * Utility to update position and DOM
  */
 function updateNodePos(node, x, y) {
