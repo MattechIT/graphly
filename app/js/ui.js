@@ -1,5 +1,6 @@
 import { state } from './state.js';
 import { floatingPanel, infoText, btnAddNode, btnAddEdge, svgCanvas } from './dom.js';
+import { centerGraph } from './layout.js';
 
 // Mostra il pannello flottante vicino alle coordinate client fornite
 export function showFloatingPanel(clientX, clientY, type, id) {
@@ -162,6 +163,9 @@ export function toggleSidebar(show) {
             btnOpen.classList.remove('hidden');
         }
     }
+    
+    // Ricalcola il centro del grafo dopo il cambio di layout
+    setTimeout(() => centerGraph(), 50);
 }
 
 function toggleSidebarButton(show) {
@@ -201,6 +205,9 @@ export function setAlgorithmMode(active) {
              r.refreshAllEdgesVisuals();
         });
     }
+
+    // Centra il grafo dopo il cambio di modalità
+    setTimeout(() => centerGraph(), 50);
 }
 
 export function handleAlgorithmClick(algorithm) {
