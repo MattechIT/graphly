@@ -128,7 +128,6 @@ svg {
 }
 
 /* NODI: cerchi che rappresentano i vertici del grafo */
-/* La classe `.node` è applicata agli elementi <circle> */
 .node {
     fill: #3498db;
     stroke: #2980b9;
@@ -136,8 +135,7 @@ svg {
     cursor: grab;
     transition: fill 0.2s, stroke-width 0.2s, stroke 0.2s;
 }
-/* Hover sul nodo: usiamo lo stesso colore giallo/arancio usato
-    per la selezione dei target degli archi, così l'UI è coerente */
+
 .node:hover {
     stroke: #f1c40f;
     stroke-width: 4px;
@@ -145,8 +143,6 @@ svg {
     filter: drop-shadow(0 0 5px rgba(241, 196, 15, 0.6));
 }
 
-/* Stato visivo quando si trascina un arco sopra il nodo e il
-    nodo è un possibile target: stesso stile del hover intensificato */
 .node.target-hover {
     stroke: #f1c40f;
     stroke-width: 4px;
@@ -154,19 +150,6 @@ svg {
     filter: drop-shadow(0 0 5px rgba(241, 196, 15, 0.6));
 }
 
-/* Testo numero nel centro del nodo. E' un <text> SVG con classe
-    `.node-label` che non interferisce con eventi del mouse */
-.node-label {
-    fill: white;
-    font-size: 14px;
-    font-weight: bold;
-    text-anchor: middle;
-    dominant-baseline: central;
-    pointer-events: none; /* non riceve eventi mouse */
-    user-select: none;
-}
-
-/* Testo numero nel nodo */
 .node-label {
     fill: white;
     font-size: 14px;
@@ -177,25 +160,18 @@ svg {
     user-select: none;
 }
 
-/* ARCHI: le linee che collegano i nodi. Per usabilità 
-    abbiamo due tracciati per ogni arco: la linea visibile
-    (`.edge`) e una linea invisibile piu' spessa (`.edge-hitarea`)
-    che aumenta la zona di interazione del mouse.
-    - `.edge` è la linea visibile (colore, freccia a fine linea)
-    - `.edge-hitarea` è trasparente ma cattura hover/click
-*/
+/* ARCHI: le linee che collegano i nodi */
 .edge {
     stroke: #34495e;
     stroke-width: 2px;
-    pointer-events: stroke; /* Permette hover sulla linea */
+    pointer-events: stroke;
     cursor: pointer;
     transition: stroke 0.2s, stroke-width 0.2s;
 }
 
-/* Hit area invisibile per aumentare la sensibilità all'hover */
 .edge-hitarea {
     stroke: transparent;
-    stroke-width: 12px; /* larghezza di sensibilità: aumentare per più tolleranza */
+    stroke-width: 12px;
     pointer-events: stroke;
     cursor: pointer;
 }
@@ -207,7 +183,6 @@ svg {
     fill: #2c3e50;
     pointer-events: none;
     user-select: none;
-    /* Un leggero contorno bianco per far risaltare il testo sugli archi */
     paint-order: stroke;
     stroke: #ffffff;
     stroke-width: 3px;
@@ -215,14 +190,11 @@ svg {
     stroke-linejoin: round;
 }
 
-/* Stato visivo quando l'arco è evidenziato (hover) */
-.edge:hover,
-.edge.hover {
-    stroke: #9b59b6; /* colore evidenziato (temporaneo), può essere cambiato */
+.edge:hover, .edge.hover {
+    stroke: #9b59b6;
     stroke-width: 4px;
 }
 
-/* Arco temporaneo (tratteggiato) */
 .drag-edge {
     stroke: #95a5a6;
     stroke-width: 2px;
@@ -304,7 +276,6 @@ svg {
     gap: 8px;
 }
 
-/* Allinea i dropdown a destra per i menu che si trovano sul bordo destro dello schermo */
 .toolbar-right .dropdown-content {
     left: auto;
     right: 0;
@@ -335,7 +306,7 @@ svg {
     color: white;
     padding: 8px 12px;
     border-radius: 6px 0 0 6px;
-    z-index: 14; /* Sotto la sidebar (15) ma sopra il grafo */
+    z-index: 14;
     box-shadow: -2px 2px 5px rgba(0,0,0,0.2);
     font-size: 14px;
     cursor: pointer;
@@ -360,10 +331,9 @@ svg {
     display: none;
 }
 
-/* Stato toolbar disabilitato */
 #toolbar.disabled {
     opacity: 0.6;
-    pointer-events: none; /* Disabilita click su tutto */
+    pointer-events: none;
 }
 
 .sidebar-header {
@@ -410,17 +380,17 @@ svg {
     font-weight: 600;
 }
 
-/* PLAYER BAR: Controlli algoritmi */
+/* PLAYER BAR */
 #player-bar {
     position: absolute;
     bottom: 30px;
     left: 50%;
     transform: translateX(-50%);
-    background-color: rgba(44, 62, 80, 0.95); /* Leggermente trasparente */
+    background-color: rgba(44, 62, 80, 0.95);
     backdrop-filter: blur(5px);
     color: white;
     padding: 10px 25px;
-    border-radius: 50px; /* Fully rounded */
+    border-radius: 50px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -440,12 +410,11 @@ svg {
     align-items: center;
 }
 
-/* Icon Buttons Style */
 .btn-icon {
     background-color: transparent !important;
     color: #ecf0f1 !important;
     padding: 8px;
-    border-radius: 50%; /* Circle */
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -465,7 +434,6 @@ svg {
     transform: none;
 }
 
-/* Play Button Special Style */
 .circle-btn {
     width: 50px;
     height: 50px;
@@ -479,11 +447,11 @@ svg {
 }
 
 .circle-btn .material-symbols-outlined {
-    font-size: 32px; /* Bigger icon */
+    font-size: 32px;
 }
 
 #player-stop {
-    color: #e74c3c !important; /* Red icon */
+    color: #e74c3c !important;
 }
 
 #player-stop:hover {
@@ -504,7 +472,6 @@ svg {
     margin-top: 4px;
 }
 
-/* Utility per nascondere elementi */
 .hidden {
     display: none !important;
 }
@@ -572,4 +539,73 @@ svg {
 
 #floating-panel .panel-option:active {
     background-color: #d5dbdb;
+}
+
+/* --- RESPONSIVE DESIGN --- */
+@media (max-width: 768px) {
+    #toolbar {
+        padding: 8px;
+        overflow-x: auto;
+        white-space: nowrap;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .btn-text {
+        display: none !important;
+    }
+
+    .btn-icon-text {
+        padding: 8px !important;
+        min-width: 44px;
+        justify-content: center;
+    }
+
+    .toolbar-group {
+        gap: 4px;
+    }
+
+    #logo {
+        width: 30px;
+        margin-right: 5px;
+    }
+
+    #info {
+        display: none;
+    }
+
+    #log-sidebar {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: 85% !important;
+        z-index: 1000;
+        box-shadow: -5px 0 15px rgba(0,0,0,0.3);
+    }
+
+    #player-bar {
+        width: 90%;
+        min-width: unset;
+        bottom: 20px;
+        padding: 8px 15px;
+    }
+
+    .btn-icon {
+        width: 35px;
+        height: 35px;
+    }
+
+    .circle-btn {
+        width: 45px;
+        height: 45px;
+    }
+
+    .dropdown-content {
+        position: fixed;
+        top: 60px;
+        left: 10px;
+        right: 10px;
+        width: auto;
+        min-width: unset;
+    }
 }

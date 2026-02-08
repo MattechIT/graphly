@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="icon" type="image/x-icon" href="res/favicon.ico">
     <link rel="stylesheet" href="css/style.css">
     <!-- Google Material Icons -->
@@ -15,43 +15,41 @@
     <!-- Toolbar -->
     <nav id="toolbar" role="navigation" aria-label="Toolbar">
         <img id="logo" src="res/logo.png" alt="Graph Logo" />
-
         <div class="toolbar-group">
             <button id="btn-add-node" class="btn-edit btn-icon-text" type="button">
                 <span class="material-symbols-outlined">add_circle</span>
-                Add Node
+                <span class="btn-text">Add Node</span>
             </button>
             <button id="btn-add-edge" class="btn-edit btn-icon-text" type="button">
                 <span class="material-symbols-outlined">mediation</span>
-                Add Edge
+                <span class="btn-text">Add Edge</span>
             </button>
         </div>
         <span id="info" role="status" aria-live="polite">Current Mode: Move</span>
-
         <div class="toolbar-right">
             <div class="toolbar-group">
                 <div class="dropdown">
                     <button id="btn-layout-menu" class="btn-icon-text" title="Change Graph Layout">
                         <span class="material-symbols-outlined">grid_view</span>
-                        Layout
+                        <span class="btn-text">Layout</span>
                         <span class="material-symbols-outlined dropdown-arrow">arrow_drop_down</span>
                     </button>
                     <div id="layout-dropdown" class="dropdown-content">
                         <button id="btn-layout-compact" class="btn-dropdown-item">
                             <span class="material-symbols-outlined">view_stream</span>
-                            Compact
+                            <span class="btn-text">Compact</span>
                         </button>
                         <button id="btn-layout-layered" class="btn-dropdown-item">
                             <span class="material-symbols-outlined">reorder</span>
-                            Layered
+                            <span class="btn-text">Layered</span>
                         </button>
                         <button id="btn-layout-circle" class="btn-dropdown-item">
                             <span class="material-symbols-outlined">progress_activity</span>
-                            Circle
+                            <span class="btn-text">Circle</span>
                         </button>
                         <button id="btn-layout-grid" class="btn-dropdown-item">
                             <span class="material-symbols-outlined">grid_view</span>
-                            Grid
+                            <span class="btn-text">Grid</span>
                         </button>
                     </div>
                 </div>
@@ -60,7 +58,7 @@
                 <div class="dropdown">
                     <button id="btn-algo-menu" class="btn-icon-text" title="Run Algorithm">
                         <span class="material-symbols-outlined">analytics</span>
-                        Algorithms
+                        <span class="btn-text">Algorithms</span>
                         <span class="material-symbols-outlined dropdown-arrow">arrow_drop_down</span>
                     </button>
                     <div id="algorithm-container" class="dropdown-content">
@@ -71,44 +69,37 @@
             <div class="toolbar-group">
                 <button id="btn-save" class="btn-icon-text" title="Save Graph JSON">
                     <span class="material-symbols-outlined">save</span>
-                    Save
+                    <span class="btn-text">Save</span>
                 </button>
                 <button id="btn-load" class="btn-icon-text" title="Load Graph JSON">
                     <span class="material-symbols-outlined">upload_file</span>
-                    Load
+                    <span class="btn-text">Load</span>
                 </button>
                 <input type="file" id="input-load-file" accept=".json" style="display: none;">
             </div>
         </div>
     </nav>
-    
     <!-- Graph container -->
     <main id="main" role="main">
         <div id="graph-container">
             <button id="btn-open-sidebar" class="hidden" title="Open Log">📜 Log</button>
             <svg id="svg-canvas">
                 <defs>
-                    <marker id="arrowhead" markerWidth="12" markerHeight="12" 
-                    refX="10" refY="3.5" orient="auto">
+                    <marker id="arrowhead" markerWidth="12" markerHeight="12" refX="10" refY="3.5" orient="auto">
                         <polygon points="0 0, 10 3.5, 0 7" fill="#34495e" />
                     </marker>
-                    
-                    <marker id="arrowhead-drag" markerWidth="12" markerHeight="12" 
-                    refX="10" refY="3.5" orient="auto">
+                    <marker id="arrowhead-drag" markerWidth="12" markerHeight="12" refX="10" refY="3.5" orient="auto">
                         <polygon points="0 0, 10 3.5, 0 7" fill="#95a5a6" />
                     </marker>
                 </defs>
-
                 <g id="edges-layer"></g>
                 <g id="nodes-layer"></g>
                 <g id="drag-layer"></g>
             </svg>
-
             <!-- Floating panel -->
             <div id="floating-panel" role="dialog" aria-hidden="true" aria-label="Element Settings">
                 <!-- Content injected dynamically by ui.js -->
             </div>
-
             <!-- Player Bar -->
             <div id="player-bar" class="hidden">
                 <div class="player-controls">
@@ -137,7 +128,6 @@
                 </div>
             </div>
         </div>
-
         <aside id="log-sidebar" class="hidden">
             <div class="sidebar-header">
                 <h3>Algorithm Log</h3>

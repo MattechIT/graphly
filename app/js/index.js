@@ -91,7 +91,7 @@ algorithms.forEach(algo => {
 
     btn.innerHTML = `
         <span class="material-symbols-outlined">${icon}</span>
-        ${algo.name}
+        <span class="btn-text">${algo.name}</span>
     `;
     btn.id = `btn-${algo.id}`;
     
@@ -104,4 +104,3 @@ algorithms.forEach(algo => {
     
     algorithmContainer.appendChild(btn);
 });
-
