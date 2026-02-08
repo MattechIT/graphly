@@ -68,8 +68,13 @@ export function importGraph(file) {
 function loadGraphData(data) {
     renderer.clearGraph();
 
+    let missingCoords = false;
+
     // Import elements
     data.nodes.forEach(n => {
+        if (n.x === undefined || n.y === undefined) {
+            missingCoords = true;
+        }
         const node = renderer.createNode(n.x || 0, n.y || 0, n.id, n.userLabel || null);
         interactions.attachNodeListeners(node);
     });
@@ -79,6 +84,12 @@ function loadGraphData(data) {
 
     //Update ID counters
     syncIdCounters(data.nodes, data.edges);
+
+    if (missingCoords) {
+        import('./layout.js').then(layout => {
+            layout.applyCompactLayout();
+        });
+    }
 
     console.log("Import successfully");
 }
