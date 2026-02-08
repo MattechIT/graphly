@@ -15,6 +15,7 @@
     <!-- Toolbar -->
     <nav id="toolbar" role="navigation" aria-label="Toolbar">
         <img id="logo" src="res/logo.png" alt="Graph Logo" />
+
         <div class="toolbar-group">
             <button id="btn-add-node" class="btn-edit btn-icon-text" type="button">
                 <span class="material-symbols-outlined">add_circle</span>
@@ -25,42 +26,60 @@
                 Add Edge
             </button>
         </div>
-        <div class="toolbar-divider"></div>
-        <div class="toolbar-group">
-            <button id="btn-save" class="btn-icon-text" title="Save Graph JSON">
-                <span class="material-symbols-outlined">save</span>
-                Save
-            </button>
-            <button id="btn-load" class="btn-icon-text" title="Load Graph JSON">
-                <span class="material-symbols-outlined">upload_file</span>
-                Load
-            </button>
-        </div>
-        <div class="toolbar-divider"></div>
-        <div class="toolbar-group">
-            <button id="btn-layout-compact" class="btn-icon-text" title="Compact 3-Row Layout">
-                <span class="material-symbols-outlined">view_stream</span>
-                Compact
-            </button>
-            <button id="btn-layout-layered" class="btn-icon-text" title="Layered (Flow) Layout">
-                <span class="material-symbols-outlined">reorder</span>
-                Layered
-            </button>
-            <button id="btn-layout-circle" class="btn-icon-text" title="Circular Layout">
-                <span class="material-symbols-outlined">progress_activity</span>
-                Circle
-            </button>
-            <button id="btn-layout-grid" class="btn-icon-text" title="Grid Layout">
-                <span class="material-symbols-outlined">grid_view</span>
-                Grid
-            </button>
-            <input type="file" id="input-load-file" accept=".json" style="display: none;">
-        </div>
-        <div class="toolbar-divider"></div>
-        <div class="toolbar-group" id="algorithm-container">
-            <!-- Buttons will be injected dynamically -->
-        </div>
         <span id="info" role="status" aria-live="polite">Current Mode: Move</span>
+
+        <div class="toolbar-right">
+            <div class="toolbar-group">
+                <div class="dropdown">
+                    <button id="btn-layout-menu" class="btn-icon-text" title="Change Graph Layout">
+                        <span class="material-symbols-outlined">grid_view</span>
+                        Layout
+                        <span class="material-symbols-outlined dropdown-arrow">arrow_drop_down</span>
+                    </button>
+                    <div id="layout-dropdown" class="dropdown-content">
+                        <button id="btn-layout-compact" class="btn-dropdown-item">
+                            <span class="material-symbols-outlined">view_stream</span>
+                            Compact
+                        </button>
+                        <button id="btn-layout-layered" class="btn-dropdown-item">
+                            <span class="material-symbols-outlined">reorder</span>
+                            Layered
+                        </button>
+                        <button id="btn-layout-circle" class="btn-dropdown-item">
+                            <span class="material-symbols-outlined">progress_activity</span>
+                            Circle
+                        </button>
+                        <button id="btn-layout-grid" class="btn-dropdown-item">
+                            <span class="material-symbols-outlined">grid_view</span>
+                            Grid
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="toolbar-group">
+                <div class="dropdown">
+                    <button id="btn-algo-menu" class="btn-icon-text" title="Run Algorithm">
+                        <span class="material-symbols-outlined">analytics</span>
+                        Algorithms
+                        <span class="material-symbols-outlined dropdown-arrow">arrow_drop_down</span>
+                    </button>
+                    <div id="algorithm-container" class="dropdown-content">
+                        <!-- Buttons will be injected dynamically -->
+                    </div>
+                </div>
+            </div>
+            <div class="toolbar-group">
+                <button id="btn-save" class="btn-icon-text" title="Save Graph JSON">
+                    <span class="material-symbols-outlined">save</span>
+                    Save
+                </button>
+                <button id="btn-load" class="btn-icon-text" title="Load Graph JSON">
+                    <span class="material-symbols-outlined">upload_file</span>
+                    Load
+                </button>
+                <input type="file" id="input-load-file" accept=".json" style="display: none;">
+            </div>
+        </div>
     </nav>
     
     <!-- Graph container -->

@@ -26,13 +26,6 @@ body {
     gap: 8px;
 }
 
-.toolbar-divider {
-    width: 2px;
-    height: 30px;
-    background-color: #34495e;
-    margin: 0 8px;
-}
-
 .btn-alg {
     background-color: #e3961a !important;
     color: #ecf0f1 !important;
@@ -237,10 +230,84 @@ svg {
     pointer-events: none;
 }
 
+/* Pulsanti dropdown e menu a comparsa */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #ffffff;
+    min-width: 180px;
+    box-shadow: 0px 8px 16px rgba(0,0,0,0.15);
+    z-index: 100;
+    border-radius: 8px;
+    padding: 8px 0;
+    margin-top: 8px;
+    border: 1px solid #e0e0e0;
+    flex-direction: column;
+}
+
+.dropdown-content.show {
+    display: flex;
+}
+
+.btn-dropdown-item {
+    background: none !important;
+    color: #34495e !important;
+    width: 100%;
+    text-align: left;
+    padding: 10px 16px !important;
+    border-radius: 0 !important;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    font-weight: 500 !important;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-dropdown-item:hover {
+    background-color: #f8f9fa !important;
+    color: #3498db !important;
+}
+
+.btn-dropdown-item .material-symbols-outlined {
+    font-size: 20px;
+}
+
+.dropdown-arrow {
+    font-size: 18px !important;
+    margin-left: 4px;
+    transition: transform 0.2s;
+}
+
 #info {
-    margin-left: auto;
     font-size: 0.9em;
     color: #bdc3c7;
+    margin-left: 15px;
+    padding-left: 15px;
+    border-left: 1px solid #34495e;
+    font-style: italic;
+}
+
+.toolbar-right {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Allinea i dropdown a destra per i menu che si trovano sul bordo destro dello schermo */
+.toolbar-right .dropdown-content {
+    left: auto;
+    right: 0;
 }
 
 /* Pannello flottante */

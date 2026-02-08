@@ -38,10 +38,38 @@ btnSave.addEventListener('click', () => persistence.exportGraph());
 btnLoad.addEventListener('click', () => inputLoadFile.click());
 
 // Controlli Layout
-btnLayoutLayered.addEventListener('click', () => layout.applyLayeredLayout());
-btnLayoutCompact.addEventListener('click', () => layout.applyCompactLayout());
-btnLayoutCircle.addEventListener('click', () => layout.applyCircleLayout());
-btnLayoutGrid.addEventListener('click', () => layout.applyGridLayout());
+const btnLayoutMenu = document.getElementById('btn-layout-menu');
+const layoutDropdown = document.getElementById('layout-dropdown');
+const btnAlgoMenu = document.getElementById('btn-algo-menu');
+
+// Toggle Dropdowns
+btnLayoutMenu.addEventListener('click', (e) => {
+    e.stopPropagation();
+    layoutDropdown.classList.toggle('show');
+    algorithmContainer.classList.remove('show');
+});
+
+btnAlgoMenu.addEventListener('click', (e) => {
+    e.stopPropagation();
+    algorithmContainer.classList.toggle('show');
+    layoutDropdown.classList.remove('show');
+});
+
+// Close dropdowns on click outside
+document.addEventListener('click', () => {
+    layoutDropdown.classList.remove('show');
+    algorithmContainer.classList.remove('show');
+});
+
+const handleLayoutClick = (layoutFunc) => {
+    layoutFunc();
+    layoutDropdown.classList.remove('show');
+};
+
+btnLayoutLayered.addEventListener('click', () => handleLayoutClick(layout.applyLayeredLayout));
+btnLayoutCompact.addEventListener('click', () => handleLayoutClick(layout.applyCompactLayout));
+btnLayoutCircle.addEventListener('click', () => handleLayoutClick(layout.applyCircleLayout));
+btnLayoutGrid.addEventListener('click', () => handleLayoutClick(layout.applyGridLayout));
 
 inputLoadFile.addEventListener('change', (e) => {
     persistence.importGraph(e.target.files[0]);
@@ -52,14 +80,26 @@ inputLoadFile.addEventListener('change', (e) => {
 const algorithms = getAlgorithmList();
 algorithms.forEach(algo => {
     const btn = document.createElement('button');
-    btn.className = 'btn-alg';
+    btn.className = 'btn-dropdown-item'; // Classe aggiornata
     btn.type = 'button';
-    btn.textContent = algo.name;
+    
+    // Icona opzionale basata sul tipo di algoritmo
+    let icon = 'function';
+    if (algo.id === 'dijkstra') icon = 'route';
+    if (algo.id === 'kruskal') icon = 'account_tree';
+    if (algo.id === 'ford-fulkerson') icon = 'water_drop';
+
+    btn.innerHTML = `
+        <span class="material-symbols-outlined">${icon}</span>
+        ${algo.name}
+    `;
     btn.id = `btn-${algo.id}`;
     
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', (e) => {
+        e.stopPropagation();
         console.log(`Selected algorithm: ${algo.name}`);
         ui.handleAlgorithmClick(algo); 
+        algorithmContainer.classList.remove('show');
     });
     
     algorithmContainer.appendChild(btn);
