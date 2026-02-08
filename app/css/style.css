@@ -210,6 +210,50 @@ button.active {
 
 #floating-panel.visible { display: block; }
 
+#floating-panel .panel-title {
+    padding: 8px 12px;
+    font-weight: 600;
+    color: #2c3e50;
+    border-bottom: 1px solid #ecf0f1;
+    font-size: 13px;
+}
+
+#floating-panel .panel-row {
+    padding: 8px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+#floating-panel label {
+    font-size: 11px;
+    text-transform: uppercase;
+    color: #7f8c8d;
+    font-weight: bold;
+}
+
+#floating-panel input {
+    padding: 6px;
+    border: 1px solid #dcdde1;
+    border-radius: 4px;
+    font-size: 14px;
+    outline: none;
+}
+
+#floating-panel input:focus { border-color: #3498db; }
+
+#floating-panel .panel-delete {
+    margin-top: 8px;
+    padding: 10px 12px;
+    cursor: pointer;
+    font-size: 13px;
+    color: #e74c3c;
+    border-top: 1px solid #ecf0f1;
+    font-weight: 600;
+}
+
+#floating-panel .panel-delete:hover { background-color: #fdf2f2; }
+
 #log-sidebar {
     width: 300px;
     flex-shrink: 0;
