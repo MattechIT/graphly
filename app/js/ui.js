@@ -57,6 +57,7 @@ export function showFloatingPanel(clientX, clientY, type, id) {
     }
 
     floatingPanel.classList.add('visible');
+    floatingPanel.setAttribute('aria-hidden', 'false');
     
     // Focus automatico sul primo input
     setTimeout(() => {
@@ -100,6 +101,7 @@ function addDeleteButton(onDelete) {
 
 export function hideFloatingPanel() {
     floatingPanel.classList.remove('visible');
+    floatingPanel.setAttribute('aria-hidden', 'true');
     state.selectedElement = null;
 }
 
