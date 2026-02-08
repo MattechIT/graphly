@@ -6,6 +6,7 @@ body {
     display: flex;
     flex-direction: column;
     height: 100vh;
+    height: 100dvh;
     user-select: none;
 }
 
@@ -347,7 +348,7 @@ button.active {
     .btn-icon-text { padding: 8px !important; min-width: 44px; }
     #logo { width: 30px; }
     #log-sidebar { position: fixed; top: 0; right: 0; bottom: 0; width: 85% !important; z-index: 1000; }
-    #player-bar { width: 90%; min-width: unset; bottom: 20px; }
+    #player-bar { width: 90%; min-width: unset; bottom: 10px; padding: 8px 15px; }
     .dropdown-content { position: fixed; top: 60px; left: 10px; right: 10px; width: auto; }
 }
 
