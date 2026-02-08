@@ -31,8 +31,10 @@ export const playerStepInfo = document.getElementById('player-step-info');
 
 export function getMousePosition(evt) {
     const rect = svgCanvas.getBoundingClientRect();
+    const clientX = evt.clientX ?? (evt.touches ? evt.touches[0].clientX : 0);
+    const clientY = evt.clientY ?? (evt.touches ? evt.touches[0].clientY : 0);
     return {
-        x: evt.clientX - rect.left,
-        y: evt.clientY - rect.top
+        x: clientX - rect.left,
+        y: clientY - rect.top
     };
 }

@@ -6,22 +6,35 @@ import * as ui from './ui.js';
 // Inizializza gli handler globali e le funzioni di attach per i nodi
 export function init() {
     // Click sullo sfondo per creare nodo (se in modalità addNode)
-    svgCanvas.addEventListener('mousedown', (e) => {
+    const handleBgStart = (e) => {
         if (e.target.id === 'svg-canvas' && state.currentMode === 'addNode') {
             const pos = getMousePosition(e);
             const node = renderer.createNode(pos.x, pos.y);
             attachNodeListeners(node);
         }
-    });
+    };
 
-    // Mouse move globale
-    window.addEventListener('mousemove', (e) => {
+    svgCanvas.addEventListener('mousedown', handleBgStart);
+    svgCanvas.addEventListener('touchstart', (e) => {
+        handleBgStart(e);
+        // Preveniamo lo scrolling della pagina quando si tocca l'area del grafo
+        if (state.currentMode) e.preventDefault();
+    }, { passive: false });
+
+    // Move globale
+    const handleMove = (e) => {
         const pos = getMousePosition(e);
 
         if (state.isDraggingEdge && state.tempEdgeLine) {
             state.tempEdgeLine.setAttribute('x2', pos.x);
             state.tempEdgeLine.setAttribute('y2', pos.y);
+            
+            if (e.touches) {
+                const target = document.elementFromPoint(e.touches[0].clientX, e.touches[0].clientY);
+                updateTouchTarget(target);
+            }
         } else if (state.draggedNodeData && state.currentMode === null) {
+            if (e.touches) e.preventDefault(); // Blocca scroll durante drag nodo
             state.draggedNodeData.x = pos.x;
             state.draggedNodeData.y = pos.y;
             state.draggedNodeData.el.setAttribute('cx', pos.x);
@@ -33,14 +46,17 @@ export function init() {
             }
             if (state.draggedNodeData.algLabelEl) {
                 state.draggedNodeData.algLabelEl.setAttribute('x', pos.x);
-                state.draggedNodeData.algLabelEl.setAttribute('y', pos.y - 25); // NODE_RADIUS + 5
+                state.draggedNodeData.algLabelEl.setAttribute('y', pos.y - 25);
             }
             renderer.updateEdgesForNode(state.draggedNodeData.id);
         }
-    });
+    };
 
-    // Mouse up globale
-    window.addEventListener('mouseup', (e) => {
+    window.addEventListener('mousemove', handleMove);
+    window.addEventListener('touchmove', handleMove, { passive: false });
+
+    // Up globale
+    const handleEnd = (e) => {
         if (state.isDraggingEdge) {
             if (state.hoveredTargetNodeDOM && state.hoveredTargetNodeDOM !== state.edgeStartNodeDOM) {
                 renderer.createEdge(state.edgeStartNodeDOM.id, state.hoveredTargetNodeDOM.id);
@@ -61,11 +77,32 @@ export function init() {
                 Math.pow(state.draggedNodeData.y - state.draggedNodeData.startY, 2)
             );
             if (movedDistance < 5 && state.currentMode === null) {
-                ui.showFloatingPanel(e.clientX, e.clientY, 'node', state.draggedNodeData.id);
+                const clientX = e.clientX ?? (e.changedTouches ? e.changedTouches[0].clientX : 0);
+                const clientY = e.clientY ?? (e.changedTouches ? e.changedTouches[0].clientY : 0);
+                ui.showFloatingPanel(clientX, clientY, 'node', state.draggedNodeData.id);
             }
             state.draggedNodeData = null;
         }
-    });
+    };
+
+    window.addEventListener('mouseup', handleEnd);
+    window.addEventListener('touchend', handleEnd);
+}
+
+// Funzione helper per il touch targeting
+function updateTouchTarget(target) {
+    const nodeDOM = target?.classList.contains('node') ? target : null;
+    if (state.hoveredTargetNodeDOM === nodeDOM) return;
+
+    if (state.hoveredTargetNodeDOM) {
+        state.hoveredTargetNodeDOM.classList.remove('target-hover');
+    }
+    
+    state.hoveredTargetNodeDOM = nodeDOM;
+    
+    if (state.hoveredTargetNodeDOM && state.hoveredTargetNodeDOM !== state.edgeStartNodeDOM) {
+        state.hoveredTargetNodeDOM.classList.add('target-hover');
+    }
 }
 
 // Collegare gli handler essenziali a un nodo appena creato
@@ -73,6 +110,7 @@ export function attachNodeListeners(nodeData) {
     const circle = nodeData.el;
 
     circle.addEventListener('mousedown', (e) => handleNodeMouseDown(e, nodeData.id));
+    circle.addEventListener('touchstart', (e) => handleNodeMouseDown(e, nodeData.id), { passive: false });
 
     circle.addEventListener('mouseenter', (e) => {
         if (state.isDraggingEdge && state.edgeStartNodeDOM !== e.target) {
