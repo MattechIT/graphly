@@ -26,15 +26,6 @@ body {
     gap: 8px;
 }
 
-.btn-alg {
-    background-color: #e3961a !important;
-    color: #ecf0f1 !important;
-}
-
-.btn-alg:hover {
-    background-color: #45627d !important;
-}
-
 #logo {
     width: 40px;
     height: auto;
