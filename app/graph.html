@@ -86,64 +86,73 @@
             </div>
         </div>
     </nav>
-    <!-- Graph container -->
+
+    <!-- Main Workspace -->
     <main id="main" role="main">
-        <div id="graph-container">
-            <button id="btn-open-sidebar" class="hidden" title="Open Log">📜 Log</button>
-            <svg id="svg-canvas">
-                <defs>
-                    <marker id="arrowhead" markerWidth="12" markerHeight="12" refX="10" refY="3.5" orient="auto">
-                        <polygon points="0 0, 10 3.5, 0 7" fill="#34495e" />
-                    </marker>
-                    <marker id="arrowhead-drag" markerWidth="12" markerHeight="12" refX="10" refY="3.5" orient="auto">
-                        <polygon points="0 0, 10 3.5, 0 7" fill="#95a5a6" />
-                    </marker>
-                </defs>
-                <g id="edges-layer"></g>
-                <g id="nodes-layer"></g>
-                <g id="drag-layer"></g>
-            </svg>
-            <!-- Floating panel -->
-            <div id="floating-panel" role="dialog" aria-hidden="true" aria-label="Element Settings">
-                <!-- Content injected dynamically by ui.js -->
+        <div id="upper-workspace">
+            <div id="graph-container">
+                <button id="btn-open-sidebar" class="hidden" title="Open Log">
+                    <span class="material-symbols-outlined">list_alt</span>
+                    Show step-by-step
+                </button>
+                <svg id="svg-canvas">
+                    <defs>
+                        <marker id="arrowhead" markerWidth="12" markerHeight="12" refX="10" refY="3.5" orient="auto">
+                            <polygon points="0 0, 10 3.5, 0 7" fill="#34495e" />
+                        </marker>
+                        <marker id="arrowhead-drag" markerWidth="12" markerHeight="12" refX="10" refY="3.5" orient="auto">
+                            <polygon points="0 0, 10 3.5, 0 7" fill="#95a5a6" />
+                        </marker>
+                    </defs>
+                    <g id="edges-layer"></g>
+                    <g id="nodes-layer"></g>
+                    <g id="drag-layer"></g>
+                </svg>
+                <!-- Floating panel -->
+                <div id="floating-panel" role="dialog" aria-hidden="true" aria-label="Element Settings">
+                    <!-- Content injected dynamically by ui.js -->
+                </div>
             </div>
-            <!-- Player Bar -->
-            <div id="player-bar" class="hidden">
-                <div class="player-controls">
-                    <button id="player-start" class="btn-icon" title="Restart">
-                        <span class="material-symbols-outlined">skip_previous</span>
-                    </button>
-                    <button id="player-back" class="btn-icon" title="Back">
-                        <span class="material-symbols-outlined">navigate_before</span>
-                    </button>
-                    <button id="player-play" class="btn-icon circle-btn" title="Play/Pause">
-                        <span class="material-symbols-outlined">play_arrow</span>
-                    </button>
-                    <button id="player-next" class="btn-icon" title="Next">
-                        <span class="material-symbols-outlined">navigate_next</span>
-                    </button>
-                    <button id="player-end" class="btn-icon" title="Go to End">
-                        <span class="material-symbols-outlined">skip_next</span>
-                    </button>
-                    <div class="divider"></div>
-                    <button id="player-stop" class="btn-icon" title="Stop">
-                        <span class="material-symbols-outlined">stop</span>
-                    </button>
+
+            <aside id="log-sidebar" class="hidden">
+                <div class="sidebar-header">
+                    <h3>Step-By-Step</h3>
+                    <button id="btn-close-sidebar">&times;</button>
                 </div>
-                <div class="player-info">
-                    <span id="player-step-info">Step: 0/0</span>
-                </div>
+                <ul id="log-list">
+                    <!-- Log entries will be added here -->
+                </ul>
+            </aside>
+        </div>
+
+        <!-- Player Bar (Full Width Bottom) -->
+        <div id="player-bar" class="hidden">
+            <div class="player-info">
+                <span id="player-step-info">Step: 0/0</span>
+            </div>
+            <div class="player-controls">
+                <button id="player-start" class="btn-icon" title="Restart">
+                    <span class="material-symbols-outlined">skip_previous</span>
+                </button>
+                <button id="player-back" class="btn-icon" title="Back">
+                    <span class="material-symbols-outlined">navigate_before</span>
+                </button>
+                <button id="player-play" class="btn-icon circle-btn" title="Play/Pause">
+                    <span class="material-symbols-outlined">play_arrow</span>
+                </button>
+                <button id="player-next" class="btn-icon" title="Next">
+                    <span class="material-symbols-outlined">navigate_next</span>
+                </button>
+                <button id="player-end" class="btn-icon" title="Go to End">
+                    <span class="material-symbols-outlined">skip_next</span>
+                </button>
+            </div>
+            <div class="player-stop-container">
+                <button id="player-stop" class="btn-icon" title="Stop">
+                    <span class="material-symbols-outlined">stop</span>
+                </button>
             </div>
         </div>
-        <aside id="log-sidebar" class="hidden">
-            <div class="sidebar-header">
-                <h3>Algorithm Log</h3>
-                <button id="btn-close-sidebar">&times;</button>
-            </div>
-            <ul id="log-list">
-                <!-- Log entries will be added here -->
-            </ul>
-        </aside>
     </main>
 </body>
 </html>
