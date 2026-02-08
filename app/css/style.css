@@ -103,41 +103,35 @@ button:not(.active) {
     background-color: #8e44ad;
 }
 
-/* Contenitore principale del grafo (controlla la dimensione SVG)
-    e fornisce eventuale texture di sfondo */
+main {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    min-height: 0;
+    width: 100%;
+    overflow: hidden;
+}
+
 #graph-container {
-    flex-grow: 1;
+    flex: 1 1 0%;
+    min-width: 0;
+    width: 0;
     background-color: #f4f7f6;
     cursor: default;
     position: relative;
-    /* Texture a griglia opzionale per eleganza */
     background-image: radial-gradient(#e0e0e0 1px, transparent 1px);
     background-size: 20px 20px;
-}
-
-/* Rendiamo <main> un contenitore flessibile in modo che
-   il #graph-container possa espandersi correttamente */
-main {
-    flex: 1 1 auto;
     display: flex;
-    min-height: 0; /* necessario per evitare overflow in alcuni browser */
-}
-
-/* Assicuriamo che il contenitore interno prenda tutto lo spazio e
-   che l'SVG possa crescere fino a riempire l'area */
-#graph-container {
-    display: flex;
-    flex: 1 1 auto;
+    flex-direction: column;
     align-items: stretch;
-    min-height: 0;
 }
 
 /* L'elemento SVG che contiene i layer di nodi/archi */
 svg {
     width: 100%;
     height: 100%;
+    flex: 1;
     display: block;
-    flex: 1 1 auto; /* permette di crescere all'interno del contenitore flex */
 }
 
 /* NODI: cerchi che rappresentano i vertici del grafo */
@@ -287,22 +281,16 @@ svg {
 /* SIDEBAR: Log degli algoritmi */
 #log-sidebar {
     width: 300px;
+    flex-shrink: 0;
     background-color: white;
-    border-left: 2px solid #ecf0f1; /* Border ora a sinistra */
-    border-right: none;
+    border-left: 2px solid #ecf0f1;
     display: flex;
     flex-direction: column;
-    transition: width 0.3s ease, padding 0.3s ease; /* Smooth toggle */
     z-index: 15;
-    order: 2; /* Sposta visivamente a destra del graph-container */
 }
 
 #log-sidebar.hidden {
     display: none;
-}
-
-#graph-container {
-    order: 1; /* Assicura che il grafo stia a sinistra */
 }
 
 /* Stato toolbar disabilitato */

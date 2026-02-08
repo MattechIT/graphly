@@ -65,18 +65,8 @@
     
     <!-- Graph container -->
     <main id="main" role="main">
-        <button id="btn-open-sidebar" class="hidden" title="Open Log">📜 Log</button>
-        <aside id="log-sidebar" class="hidden">
-            <div class="sidebar-header">
-                <h3>Algorithm Log</h3>
-                <button id="btn-close-sidebar">&times;</button>
-            </div>
-            <ul id="log-list">
-                <!-- Log entries will be added here -->
-            </ul>
-        </aside>
-
         <div id="graph-container">
+            <button id="btn-open-sidebar" class="hidden" title="Open Log">📜 Log</button>
             <svg id="svg-canvas">
                 <defs>
                     <marker id="arrowhead" markerWidth="12" markerHeight="12" 
@@ -128,6 +118,16 @@
                 </div>
             </div>
         </div>
+
+        <aside id="log-sidebar" class="hidden">
+            <div class="sidebar-header">
+                <h3>Algorithm Log</h3>
+                <button id="btn-close-sidebar">&times;</button>
+            </div>
+            <ul id="log-list">
+                <!-- Log entries will be added here -->
+            </ul>
+        </aside>
     </main>
 </body>
 </html>
