@@ -13,12 +13,18 @@ import {
     algorithmContainer
 } from './dom.js';
 import { getAlgorithmList } from './algorithms/registry.js';
+import { centerGraph } from './layout.js';
 
 // Esponi funzioni globali
 window.setMode = ui.setMode;
 
 // Inizializza i listener globali
 interactions.init();
+
+// Gestione Resize Finestra
+window.addEventListener('resize', () => {
+    centerGraph();
+});
 
 // Aggiorna l'UI iniziale
 ui.updateUI();
