@@ -34,8 +34,20 @@ btnAddNode.addEventListener('click', () => ui.setMode('addNode'));
 btnAddEdge.addEventListener('click', () => ui.setMode('addEdge'));
 
 // --- FEATURE: FILE PERSISTENCE (JSON) ---
-btnSaveJson.addEventListener('click', () => persistence.exportGraph());
-btnLoadJson.addEventListener('click', () => inputLoadFile.click());
+const closeAllDropdowns = () => {
+    document.querySelectorAll('.dropdown-content').forEach(c => c.classList.remove('show'));
+};
+
+btnSaveJson.addEventListener('click', () => {
+    persistence.exportGraph();
+    closeAllDropdowns();
+});
+
+btnLoadJson.addEventListener('click', () => {
+    inputLoadFile.click();
+    closeAllDropdowns();
+});
+
 inputLoadFile.addEventListener('change', (e) => {
     persistence.importGraph(e.target.files[0]);
     e.target.value = '';
@@ -92,11 +104,6 @@ document.querySelectorAll('.btn-close-modal').forEach(btn => {
         const modalId = btn.getAttribute('data-close');
         document.getElementById(modalId).classList.add('hidden');
     });
-});
-
-window.addEventListener('click', (e) => {
-    if (e.target === importOverlay) importOverlay.classList.add('hidden');
-    if (e.target === exportOverlay) exportOverlay.classList.add('hidden');
 });
 
 // --- FEATURE: GRAPH LAYOUTS ---
