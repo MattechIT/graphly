@@ -201,6 +201,9 @@ export function setAlgorithmMode(active) {
 }
 
 export function handleAlgorithmClick(algorithm) {
+    // Silent guard
+    if (state.nodes.length === 0) return;
+
     state.selectedAlgorithm = algorithm;
     state.algorithmParams = {};
 
@@ -253,12 +256,15 @@ export function runAlgorithm(params) {
     try {
         const steps = state.selectedAlgorithm.run(nodesCopy, edgesCopy, params);
         
+        if (!steps || !Array.isArray(steps) || steps.length === 0) {
+            throw new Error("Algorithm returned no steps.");
+        }
+
         import('./player.js').then(player => {
             player.loadAlgorithm(steps);
         });
     } catch (e) {
-        console.error("Algorithm error:", e);
-        alert("Error running algorithm: " + e.message);
+        console.error("Algorithm Execution Error:", e);
         setAlgorithmMode(false);
     }
 }
