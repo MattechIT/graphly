@@ -3,7 +3,7 @@ export class Graph {
         this.nodes = [];            // [{ id, x, y, userLabel, algLabel }]
         this.idToIndex = new Map(); // id -> index
         this.edges = [];            // [{ id, source, target, weight, capacity, flow }]
-        this.adj = [];              // adjacency list: array of arrays of edge indices
+        this.adj = [];              // Adjacency list: array of arrays of edge indices
     }
 
     addNode(node) {
@@ -21,7 +21,7 @@ export class Graph {
     }
 
     addEdge(edge) {
-        // edge: { id, sourceId, targetId, weight, capacity, flow }
+        // Edge: { id, sourceId, targetId, weight, capacity, flow }
         const s = this.idToIndex.get(edge.sourceId);
         const t = this.idToIndex.get(edge.targetId);
         if (s === undefined || t === undefined) return null;
@@ -38,7 +38,7 @@ export class Graph {
         return eIdx;
     }
 
-    // optional helper to get outgoing edges of node by index
+    // Optional helper to get outgoing edges of node by index
     outEdgesOf(nodeIndex) {
         return this.adj[nodeIndex].map(eIdx => this.edges[eIdx]);
     }
@@ -46,7 +46,7 @@ export class Graph {
 
 export function buildGraphFromState(state) {
     const g = new Graph();
-    // add nodes
+    // Add nodes
     state.nodes.forEach(n => g.addNode({ 
         id: n.id, 
         x: n.x, 
@@ -54,7 +54,7 @@ export function buildGraphFromState(state) {
         userLabel: n.userLabel, 
         algLabel: n.algLabel 
     }));
-    // add edges
+    // Add edges
     state.edges.forEach(e => {
         g.addEdge({ 
             id: e.id, 
