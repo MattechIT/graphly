@@ -74,14 +74,40 @@
                 </div>
             </div>
             <div class="toolbar-group">
-                <button id="btn-save" class="btn-icon-text" title="Save Graph JSON">
-                    <span class="material-symbols-outlined">save</span>
-                    <span class="btn-text">Save</span>
-                </button>
-                <button id="btn-load" class="btn-icon-text" title="Load Graph JSON">
-                    <span class="material-symbols-outlined">upload_file</span>
-                    <span class="btn-text">Load</span>
-                </button>
+                <div class="dropdown">
+                    <button id="btn-save-menu" class="btn-icon-text" title="Save Graph">
+                        <span class="material-symbols-outlined">save</span>
+                        <span class="btn-text">Save</span>
+                        <span class="material-symbols-outlined dropdown-arrow">arrow_drop_down</span>
+                    </button>
+                    <div id="save-dropdown" class="dropdown-content">
+                        <button id="btn-save-json" class="btn-dropdown-item">
+                            <span class="material-symbols-outlined">javascript</span>
+                            <span class="btn-text">As JSON (.json)</span>
+                        </button>
+                        <button id="btn-save-text" class="btn-dropdown-item">
+                            <span class="material-symbols-outlined">description</span>
+                            <span class="btn-text">As Text (List)</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <button id="btn-load-menu" class="btn-icon-text" title="Load Graph">
+                        <span class="material-symbols-outlined">upload_file</span>
+                        <span class="btn-text">Load</span>
+                        <span class="material-symbols-outlined dropdown-arrow">arrow_drop_down</span>
+                    </button>
+                    <div id="load-dropdown" class="dropdown-content">
+                        <button id="btn-load-json" class="btn-dropdown-item">
+                            <span class="material-symbols-outlined">file_open</span>
+                            <span class="btn-text">From JSON File</span>
+                        </button>
+                        <button id="btn-load-text" class="btn-dropdown-item">
+                            <span class="material-symbols-outlined">edit_note</span>
+                            <span class="btn-text">From Text (Quick)</span>
+                        </button>
+                    </div>
+                </div>
                 <input type="file" id="input-load-file" accept=".json" style="display: none;">
             </div>
         </div>
@@ -154,5 +180,29 @@
             </div>
         </div>
     </main>
+
+    <!-- Quick Text Import/Export Modal -->
+    <div id="modal-overlay" class="hidden">
+        <div id="quick-edit-modal">
+            <div class="modal-header">
+                <h3>Quick Text Edit</h3>
+                <button id="btn-close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="input-group">
+                    <label for="text-nodes">Nodes List (e.g. A, B, C)</label>
+                    <textarea id="text-nodes" placeholder="A, B, C, D..."></textarea>
+                </div>
+                <div class="input-group">
+                    <label for="text-edges">Edges List (e.g. A B 10)</label>
+                    <textarea id="text-edges" placeholder="A B 10&#10;B C 5/100..."></textarea>
+                </div>
+                <div id="quick-edit-status">Detected: 0 nodes, 0 edges</div>
+            </div>
+            <div class="modal-footer">
+                <button id="btn-quick-generate" class="btn-primary">Generate Graph</button>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

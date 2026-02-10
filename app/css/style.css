@@ -495,6 +495,109 @@ button.active {
 #player-stop { color: var(--state-danger) !important; }
 .divider { width: 1px; height: 24px; background: rgba(255, 255, 255, 0.2); margin: 0 5px; }
 
+/* MODALS */
+#modal-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(3px);
+}
+
+#quick-edit-modal {
+    background-color: var(--ui-bg-card);
+    width: 90%;
+    max-width: 600px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.modal-header {
+    padding: 16px 20px;
+    background-color: var(--ui-dark);
+    color: var(--text-on-dark);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#btn-close-modal {
+    background: none;
+    color: var(--text-on-dark);
+    font-size: 28px;
+    padding: 0;
+    line-height: 1;
+}
+
+.modal-body {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.modal-body .input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.modal-body label {
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+.modal-body textarea {
+    width: 100%;
+    height: 120px;
+    padding: 12px;
+    border: 1px solid var(--ui-border-dark);
+    border-radius: 8px;
+    font-family: monospace;
+    font-size: 14px;
+    resize: vertical;
+    box-sizing: border-box;
+}
+
+.modal-body textarea:focus {
+    outline: none;
+    border-color: var(--brand-primary);
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+
+#quick-edit-status {
+    font-size: 13px;
+    color: var(--brand-primary);
+    font-weight: 600;
+}
+
+.modal-footer {
+    padding: 16px 20px;
+    border-top: 1px solid var(--ui-border-light);
+    display: flex;
+    justify-content: flex-end;
+}
+
+.btn-primary {
+    background-color: var(--brand-primary);
+    color: var(--text-on-dark);
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-weight: 700;
+}
+
+.btn-primary:hover {
+    background-color: var(--brand-primary-dark);
+}
+
 /* ORIENTATION OVERLAY */
 #orientation-overlay {
     display: none;

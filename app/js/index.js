@@ -8,9 +8,9 @@ import * as persistence from './persistence.js';
 import * as layout from './layout.js';
 import { 
     btnAddNode, btnAddEdge, 
-    btnSave, btnLoad, inputLoadFile,
+    btnSaveJson, btnSaveText, btnLoadJson, btnLoadText, inputLoadFile,
     btnLayoutLayered, btnLayoutCompact, btnLayoutCircle, btnLayoutGrid,
-    algorithmContainer
+    algorithmContainer, modalOverlay, btnCloseModal, btnQuickGenerate
 } from './dom.js';
 import { getAlgorithmList } from './algorithms/registry.js';
 import { centerGraph, throttle } from './layout.js';
@@ -37,8 +37,23 @@ btnAddNode.addEventListener('click', () => ui.setMode('addNode'));
 btnAddEdge.addEventListener('click', () => ui.setMode('addEdge'));
 
 // Persistence Controls
-btnSave.addEventListener('click', () => persistence.exportGraph());
-btnLoad.addEventListener('click', () => inputLoadFile.click());
+btnSaveJson.addEventListener('click', () => persistence.exportGraph());
+btnLoadJson.addEventListener('click', () => inputLoadFile.click());
+
+// Quick Edit Modal Controls
+btnLoadText.addEventListener('click', () => {
+    modalOverlay.classList.remove('hidden');
+    // We could pre-fill textareaNodes and textareaEdges with current graph here later
+});
+
+btnCloseModal.addEventListener('click', () => {
+    modalOverlay.classList.add('hidden');
+});
+
+// Close modal clicking on overlay
+modalOverlay.addEventListener('click', (e) => {
+    if (e.target === modalOverlay) modalOverlay.classList.add('hidden');
+});
 
 // Layout Controls
 const handleLayoutClick = (layoutFunc) => {
