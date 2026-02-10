@@ -140,7 +140,7 @@ main {
     align-items: stretch;
 }
 
-svg { width: 100%; height: 100%; flex: 1; display: block; }
+svg { width: 100%; height: 100%; flex: 1; display: block; touch-action: none; }
 
 /* BUTTONS */
 button {

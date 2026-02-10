@@ -1,4 +1,4 @@
-// Cache dei riferimenti DOM e utilità per coordinate
+// DOM cache and coordinates utility
 export const svgCanvas = document.getElementById('svg-canvas');
 export const nodesLayer = document.getElementById('nodes-layer');
 export const edgesLayer = document.getElementById('edges-layer');
@@ -15,8 +15,6 @@ export const inputLoadFile = document.getElementById('input-load-file');
 export const algorithmContainer = document.getElementById('algorithm-container');
 export const infoText = document.getElementById('info');
 export const floatingPanel = document.getElementById('floating-panel');
-
-// New UI Elements
 export const logSidebar = document.getElementById('log-sidebar');
 export const btnCloseSidebar = document.getElementById('btn-close-sidebar');
 export const logList = document.getElementById('log-list');
@@ -31,10 +29,8 @@ export const playerStepInfo = document.getElementById('player-step-info');
 
 export function getMousePosition(evt) {
     const rect = svgCanvas.getBoundingClientRect();
-    const clientX = evt.clientX ?? (evt.touches ? evt.touches[0].clientX : 0);
-    const clientY = evt.clientY ?? (evt.touches ? evt.touches[0].clientY : 0);
     return {
-        x: clientX - rect.left,
-        y: clientY - rect.top
+        x: evt.clientX - rect.left,
+        y: evt.clientY - rect.top
     };
 }

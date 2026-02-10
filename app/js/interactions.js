@@ -3,9 +3,9 @@ import { getMousePosition, svgCanvas, dragLayer } from './dom.js';
 import * as renderer from './renderer.js';
 import * as ui from './ui.js';
 
-// Inizializza gli handler globali e le funzioni di attach per i nodi
+// Initialize global handlers and node attachment functions
 export function init() {
-    // Click sullo sfondo per creare nodo (se in modalità addNode)
+    // Background click to create node (if in addNode mode)
     const handleBgStart = (e) => {
         if (e.target.id === 'svg-canvas' && state.currentMode === 'addNode') {
             const pos = getMousePosition(e);
@@ -14,27 +14,30 @@ export function init() {
         }
     };
 
-    svgCanvas.addEventListener('mousedown', handleBgStart);
-    svgCanvas.addEventListener('touchstart', (e) => {
-        handleBgStart(e);
-        // Preveniamo lo scrolling della pagina quando si tocca l'area del grafo
-        if (state.currentMode) e.preventDefault();
-    }, { passive: false });
+    svgCanvas.addEventListener('pointerdown', handleBgStart);
 
-    // Move globale
+    // Global move handler
     const handleMove = (e) => {
         const pos = getMousePosition(e);
 
         if (state.isDraggingEdge && state.tempEdgeLine) {
             state.tempEdgeLine.setAttribute('x2', pos.x);
             state.tempEdgeLine.setAttribute('y2', pos.y);
-            
-            if (e.touches) {
-                const target = document.elementFromPoint(e.touches[0].clientX, e.touches[0].clientY);
-                updateTouchTarget(target);
+
+            // Manual targeting for touch:
+            const target = document.elementFromPoint(e.clientX, e.clientY);
+            const nodeDOM = target?.classList.contains('node') ? target : null;
+
+            if (state.hoveredTargetNodeDOM !== nodeDOM) {
+                if (state.hoveredTargetNodeDOM) {
+                    state.hoveredTargetNodeDOM.classList.remove('target-hover');
+                }
+                state.hoveredTargetNodeDOM = nodeDOM;
+                if (state.hoveredTargetNodeDOM && state.hoveredTargetNodeDOM !== state.edgeStartNodeDOM) {
+                    state.hoveredTargetNodeDOM.classList.add('target-hover');
+                }
             }
         } else if (state.draggedNodeData && state.currentMode === null) {
-            if (e.touches) e.preventDefault(); // Blocca scroll durante drag nodo
             state.draggedNodeData.x = pos.x;
             state.draggedNodeData.y = pos.y;
             state.draggedNodeData.el.setAttribute('cx', pos.x);
@@ -52,10 +55,9 @@ export function init() {
         }
     };
 
-    window.addEventListener('mousemove', handleMove);
-    window.addEventListener('touchmove', handleMove, { passive: false });
+    window.addEventListener('pointermove', handleMove);
 
-    // Up globale
+    // Global up handler
     const handleEnd = (e) => {
         if (state.isDraggingEdge) {
             if (state.hoveredTargetNodeDOM && state.hoveredTargetNodeDOM !== state.edgeStartNodeDOM) {
@@ -77,58 +79,24 @@ export function init() {
                 Math.pow(state.draggedNodeData.y - state.draggedNodeData.startY, 2)
             );
             if (movedDistance < 5 && state.currentMode === null) {
-                const clientX = e.clientX ?? (e.changedTouches ? e.changedTouches[0].clientX : 0);
-                const clientY = e.clientY ?? (e.changedTouches ? e.changedTouches[0].clientY : 0);
-                ui.showFloatingPanel(clientX, clientY, 'node', state.draggedNodeData.id);
+                ui.showFloatingPanel(e.clientX, e.clientY, 'node', state.draggedNodeData.id);
             }
             state.draggedNodeData = null;
         }
     };
 
-    window.addEventListener('mouseup', handleEnd);
-    window.addEventListener('touchend', handleEnd);
+    window.addEventListener('pointerup', handleEnd);
+    window.addEventListener('pointercancel', handleEnd); // Important to handle interruptions
 }
 
-// Funzione helper per il touch targeting
-function updateTouchTarget(target) {
-    const nodeDOM = target?.classList.contains('node') ? target : null;
-    if (state.hoveredTargetNodeDOM === nodeDOM) return;
-
-    if (state.hoveredTargetNodeDOM) {
-        state.hoveredTargetNodeDOM.classList.remove('target-hover');
-    }
-    
-    state.hoveredTargetNodeDOM = nodeDOM;
-    
-    if (state.hoveredTargetNodeDOM && state.hoveredTargetNodeDOM !== state.edgeStartNodeDOM) {
-        state.hoveredTargetNodeDOM.classList.add('target-hover');
-    }
-}
-
-// Collegare gli handler essenziali a un nodo appena creato
+// Attach essential handlers to a newly created node
 export function attachNodeListeners(nodeData) {
     const circle = nodeData.el;
-
-    circle.addEventListener('mousedown', (e) => handleNodeMouseDown(e, nodeData.id));
-    circle.addEventListener('touchstart', (e) => handleNodeMouseDown(e, nodeData.id), { passive: false });
-
-    circle.addEventListener('mouseenter', (e) => {
-        if (state.isDraggingEdge && state.edgeStartNodeDOM !== e.target) {
-            state.hoveredTargetNodeDOM = e.target;
-            state.hoveredTargetNodeDOM.classList.add('target-hover');
-        }
-    });
-
-    circle.addEventListener('mouseleave', (e) => {
-        if (state.hoveredTargetNodeDOM === e.target) {
-            state.hoveredTargetNodeDOM.classList.remove('target-hover');
-            state.hoveredTargetNodeDOM = null;
-        }
-    });
+    circle.addEventListener('pointerdown', (e) => handleNodePointerDown(e, nodeData.id));
 }
 
-// Handler invocato quando si preme su un nodo
-export function handleNodeMouseDown(e, nodeId) {
+// Handler invoked when a node is pressed
+export function handleNodePointerDown(e, nodeId) {
     e.stopPropagation();
     const nodeDOM = e.target;
     const nodeData = state.nodes.find(n => n.id === nodeId);
@@ -142,14 +110,14 @@ export function handleNodeMouseDown(e, nodeId) {
         state.isDraggingEdge = true;
         state.edgeStartNodeDOM = nodeDOM;
 
-        // linea temporanea di supporto
+        // Temporary helper line
         const ns = 'http://www.w3.org/2000/svg';
         const line = document.createElementNS(ns, 'line');
         line.setAttribute('x1', nodeData.x);
         line.setAttribute('y1', nodeData.y);
         line.setAttribute('x2', nodeData.x);
         line.setAttribute('y2', nodeData.y);
-        // classe e attributi espliciti per garantire visibilità durante il drag
+        // Explicit classes and attributes to ensure visibility during drag
         line.setAttribute('class', 'drag-edge');
         line.setAttribute('stroke', 'var(--text-light)');
         line.setAttribute('stroke-width', '2');
@@ -163,6 +131,7 @@ export function handleNodeMouseDown(e, nodeId) {
         state.draggedNodeData = nodeData;
         state.draggedNodeData.startX = nodeData.x;
         state.draggedNodeData.startY = nodeData.y;
+        nodeDOM.setPointerCapture(e.pointerId);
         nodeDOM.style.cursor = 'grabbing';
         ui.hideFloatingPanel();
     }
