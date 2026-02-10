@@ -166,11 +166,11 @@ button.active {
 .btn-icon-text { display: flex; align-items: center; gap: 6px; padding: 6px 12px; }
 .btn-icon-text .material-symbols-outlined { font-size: 20px; }
 
-#btn-save { background-color: var(--brand-primary); color: var(--text-on-dark); }
-#btn-save:hover { background-color: var(--brand-primary-dark); }
+#btn-save-menu { background-color: var(--brand-primary); color: var(--text-on-dark); }
+#btn-save-menu:hover { background-color: var(--brand-primary-dark); }
 
-#btn-load { background-color: var(--brand-secondary); color: var(--text-on-dark); }
-#btn-load:hover { background-color: var(--brand-secondary-dark); }
+#btn-load-menu { background-color: var(--brand-secondary); color: var(--text-on-dark); }
+#btn-load-menu:hover { background-color: var(--brand-secondary-dark); }
 
 /* GRAPH ELEMENTS (NODES & EDGES) */
 .node {
