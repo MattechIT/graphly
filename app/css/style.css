@@ -197,6 +197,12 @@ button.active {
     pointer-events: none;
 }
 
+/* Node Algorithmic States */
+.node.is-highlighted { fill: var(--alg-highlight); stroke: var(--state-warning-dark); }
+.node.is-searching { fill: var(--alg-searching); stroke: var(--state-warning-dark); }
+.node.is-success { fill: var(--alg-success); stroke: var(--state-success); }
+.node.is-path { fill: var(--alg-path); stroke: var(--brand-primary-dark); }
+
 .edge {
     stroke: var(--ui-dark-light);
     stroke-width: 2px;
@@ -213,6 +219,13 @@ button.active {
 }
 
 .edge:hover, .edge.hover { stroke: var(--brand-secondary); stroke-width: 4px; }
+
+/* Edge Algorithmic States */
+.edge.is-highlighted { stroke: var(--alg-highlight) !important; }
+.edge.is-searching { stroke: var(--alg-searching) !important; }
+.edge.is-success { stroke: var(--alg-success) !important; }
+.edge.is-path { stroke: var(--alg-path) !important; stroke-width: 4px; }
+.edge.is-error { stroke: var(--alg-error) !important; }
 
 .edge-label {
     font-size: 15px;
