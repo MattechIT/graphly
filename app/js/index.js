@@ -26,6 +26,8 @@ ui.updateUI();
 
 // Optimized Window Resize Handling
 window.addEventListener('resize', throttle(() => {
+    // Completely skip resize logic if any modal is open to prevent mobile keyboard glitches
+    if (!importOverlay.classList.contains('hidden') || !exportOverlay.classList.contains('hidden')) return;
     centerGraph();
 }, 100));
 

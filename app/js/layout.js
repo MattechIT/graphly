@@ -193,6 +193,9 @@ export function applyGridLayout() {
  */
 export function centerGraph() {
     if (state.nodes.length === 0) return;
+    
+    // Don't recalculate if a modal is open (prevents issues with mobile keyboard resize)
+    if (document.querySelector('.modal-overlay:not(.hidden)')) return;
 
     const rect = svgCanvas.getBoundingClientRect();
     const canvasWidth = rect.width;

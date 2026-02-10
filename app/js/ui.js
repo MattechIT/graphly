@@ -132,10 +132,13 @@ export function updateUI() {
 
 // Close panel clicking outside
 document.addEventListener('mousedown', (e) => {
-    if (!floatingPanel) return;
-    if (!floatingPanel.classList.contains('visible')) return;
+    if (!floatingPanel || !floatingPanel.classList.contains('visible')) return;
 
     const target = e.target;
+    
+    // Safety: If clicking inside a modal, don't do anything
+    if (target.closest('.modal-overlay') || target.closest('.modal-content')) return;
+
     const clickedOnNode = target.classList && target.classList.contains('node');
     const clickedOnEdge = target.classList && (target.classList.contains('edge') || target.classList.contains('edge-hitarea'));
     const isPanelClick = floatingPanel.contains(target);
@@ -277,6 +280,15 @@ document.getElementById('btn-close-sidebar')?.addEventListener('click', () => {
 document.getElementById('btn-open-sidebar')?.addEventListener('click', () => {
     toggleSidebar(true);
 });
+
+// Helper to manage body lock for modals
+export function toggleModalState(isOpen) {
+    if (isOpen) {
+        document.body.classList.add('modal-open');
+    } else {
+        document.body.classList.remove('modal-open');
+    }
+}
 
 /**
  * Automatically initializes all dropdown menus in the toolbar.
