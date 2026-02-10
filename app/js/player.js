@@ -207,6 +207,7 @@ function resetVisuals() {
         e.flow = 0;
         e.isSaturated = false;
         delete e.el.dataset.algState;
+        delete e.el.dataset.isSaturated;
         e.el.style.strokeWidth = "";
         renderer.updateEdgeVisuals(e);
     });

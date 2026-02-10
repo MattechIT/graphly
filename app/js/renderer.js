@@ -171,10 +171,10 @@ export function updateEdgeVisuals(edge) {
     }
 
     if (edge.isSaturated) {
-        edge.el.classList.add('is-saturated');
+        edge.el.dataset.isSaturated = "true";
         edge.labelEl.textContent = "";
     } else {
-        edge.el.classList.remove('is-saturated');
+        delete edge.el.dataset.isSaturated;
         edge.labelEl.textContent = edge.flow > 0 || isFlowMode ? `${edge.flow}/${edge.capacity}` : `${edge.weight}`;
     }
 }
