@@ -1,6 +1,8 @@
 # Graphly
 An interactive graph editor and visualizer designed to build, manipulate, and solve complex algorithms in real-time.
 
+![Graphly Banner](res/banner.png)
+
 ## 🚀 Overview
 Graphly is a web-based tool that allows users to create custom graphs through an intuitive interface. Beyond simple drawing, it serves as a powerful algorithmic solver, providing a visual step-by-step breakdown of how data moves through a network.
 
