@@ -2,12 +2,12 @@ import { state } from './state.js';
 import { floatingPanel, infoText, btnAddNode, btnAddEdge, svgCanvas } from './dom.js';
 import { centerGraph } from './layout.js';
 
-// Mostra il pannello flottante vicino alle coordinate client fornite
+// Shows the floating panel near the provided client coordinates
 export function showFloatingPanel(clientX, clientY, type, id) {
     state.selectedElement = { type, id };
 
     const container = document.getElementById('graph-container');
-    if (!container) return; // Safety check
+    if (!container) return;
     const containerRect = container.getBoundingClientRect();
     
     let panelX = clientX - containerRect.left + 10;
@@ -19,11 +19,8 @@ export function showFloatingPanel(clientX, clientY, type, id) {
 
     floatingPanel.style.left = panelX + 'px';
     floatingPanel.style.top = panelY + 'px';
-    
-    // Pulisce completamente il contenuto precedente
     floatingPanel.innerHTML = '';
 
-    // Titolo
     const titleDiv = document.createElement('div');
     titleDiv.className = 'panel-title';
     titleDiv.textContent = type === 'node' ? 'Node Properties' : 'Edge Properties';
@@ -43,7 +40,7 @@ export function showFloatingPanel(clientX, clientY, type, id) {
     } else if (type === 'edge') {
         const edge = state.edges.find(e => e.id === id);
         if (edge) {
-            // Unico input "Value" che imposta sia peso che capacità
+            // Single "Value" input that sets both weight and capacity
             const rowValue = createInputRow('Value', 'number', edge.weight, (val) => {
                 const num = parseInt(val, 10) || 0;
                 edge.weight = num;
@@ -59,7 +56,7 @@ export function showFloatingPanel(clientX, clientY, type, id) {
     floatingPanel.classList.add('visible');
     floatingPanel.setAttribute('aria-hidden', 'false');
     
-    // Focus automatico sul primo input
+    // Automatic focus on the first input
     setTimeout(() => {
         const firstInput = floatingPanel.querySelector('input');
         if (firstInput) firstInput.focus();
@@ -109,14 +106,14 @@ export function panelOptionClick(action) {
     hideFloatingPanel();
 }
 
-// Cambia la modalità (toggle)
+// Change mode (toggle)
 export function setMode(mode) {
     if (state.currentMode === mode) state.currentMode = null;
     else state.currentMode = mode;
     updateUI();
 }
 
-// Aggiorna UI (pulsanti e cursore) in base alla modalità
+// Update UI (buttons and cursor) based on mode
 export function updateUI() {
     btnAddNode.classList.toggle('active', state.currentMode === 'addNode');
     btnAddEdge.classList.toggle('active', state.currentMode === 'addEdge');
@@ -133,13 +130,12 @@ export function updateUI() {
     }
 }
 
-// Chiudi pannello cliccando fuori
+// Close panel clicking outside
 document.addEventListener('mousedown', (e) => {
     if (!floatingPanel) return;
     if (!floatingPanel.classList.contains('visible')) return;
 
     const target = e.target;
-    // Verifica se il click è dentro il pannello o su un nodo/arco
     const clickedOnNode = target.classList && target.classList.contains('node');
     const clickedOnEdge = target.classList && (target.classList.contains('edge') || target.classList.contains('edge-hitarea'));
     const isPanelClick = floatingPanel.contains(target);
@@ -149,8 +145,7 @@ document.addEventListener('mousedown', (e) => {
     }
 });
 
-// --- GUI ALGORITMI ---
-
+// --- ALGORITHM GUI ---
 export function toggleSidebar(show) {
     const sidebar = document.getElementById('log-sidebar');
     const btnOpen = document.getElementById('btn-open-sidebar');
@@ -160,13 +155,11 @@ export function toggleSidebar(show) {
         btnOpen.classList.add('hidden');
     } else {
         sidebar.classList.add('hidden');
-        // Mostra il bottone solo se siamo in modalità algoritmo
         if (state.isAlgorithmRunning) {
             btnOpen.classList.remove('hidden');
         }
     }
     
-    // Ricalcola il centro del grafo dopo il cambio di layout
     setTimeout(() => centerGraph(), 50);
 }
 
@@ -176,7 +169,7 @@ function toggleSidebarButton(show) {
     else btnOpen.classList.add('hidden');
 }
 
-// Passa dalla modalità Editor alla modalità Esecuzione Algoritmo
+// Switch between Editor mode and Algorithm Execution mode
 export function setAlgorithmMode(active) {
     state.isAlgorithmRunning = active;
     state.currentMode = null;
@@ -187,47 +180,40 @@ export function setAlgorithmMode(active) {
     const logSidebar = document.getElementById('log-sidebar');
 
     if (active) {
-        // Nascondi toolbar editor, mostra player e log
         toolbar.style.display = 'none';
         playerBar.classList.remove('hidden');
         logSidebar.classList.remove('hidden');
         hideFloatingPanel();
     } else {
-        // Torna normale
         toolbar.style.display = 'flex';
         playerBar.classList.add('hidden');
         logSidebar.classList.add('hidden');
         
-        // Nascondi anche eventuale linguetta di riapertura
         toggleSidebarButton(false);
         
-        // Pulisce log e stato
         document.getElementById('log-list').innerHTML = '';
         import('./renderer.js').then(r => {
              r.refreshAllEdgesVisuals();
         });
     }
 
-    // Centra il grafo dopo il cambio di modalità
     setTimeout(() => centerGraph(), 50);
 }
 
 export function handleAlgorithmClick(algorithm) {
     state.selectedAlgorithm = algorithm;
-    state.algorithmParams = {}; // Reset previous params
+    state.algorithmParams = {};
 
     if (algorithm.requires && algorithm.requires.length > 0) {
-        // Start selection process with the first required parameter
         startSelectionStep(0);
     } else {
-        // No input required
         runAlgorithm({});
     }
 }
 
 function startSelectionStep(stepIndex) {
     const paramName = state.selectedAlgorithm.requires[stepIndex];
-    state.selectionStep = stepIndex; // Track current step index
+    state.selectionStep = stepIndex;
     
     // Map param name to UI mode and message
     if (paramName === 'sourceNode') {
@@ -245,14 +231,12 @@ export function handleSelection(nodeId) {
     const requiredParams = state.selectedAlgorithm.requires;
     const currentParam = requiredParams[state.selectionStep];
     
-    // Save selected value
     state.algorithmParams[currentParam] = nodeId;
     
     // Check if more steps are needed
     if (state.selectionStep + 1 < requiredParams.length) {
         startSelectionStep(state.selectionStep + 1);
     } else {
-        // All params collected
         runAlgorithm(state.algorithmParams);
     }
 }
@@ -260,9 +244,9 @@ export function handleSelection(nodeId) {
 export function runAlgorithm(params) {
     if (!state.selectedAlgorithm) return;
     setAlgorithmMode(true);
-    state.currentMode = null; // Stop picking
+    state.currentMode = null;
 
-    // Deep copy dei dati per evitare modifiche dirette accidentali
+    // Deep copy of data to avoid accidental direct modifications
     const nodesCopy = JSON.parse(JSON.stringify(state.nodes));
     const edgesCopy = JSON.parse(JSON.stringify(state.edges));
 
@@ -279,7 +263,7 @@ export function runAlgorithm(params) {
     }
 }
 
-// Gestione click bottone chiusura sidebar
+// Handle sidebar close button click
 document.getElementById('btn-close-sidebar')?.addEventListener('click', () => {
     toggleSidebar(false);
 });
@@ -287,3 +271,32 @@ document.getElementById('btn-close-sidebar')?.addEventListener('click', () => {
 document.getElementById('btn-open-sidebar')?.addEventListener('click', () => {
     toggleSidebar(true);
 });
+
+/**
+ * Automatically initializes all dropdown menus in the toolbar.
+ * Handles exclusive opening (closing others) and click-outside to close.
+ */
+export function initDropdowns() {
+    const dropdowns = document.querySelectorAll('.dropdown');
+    
+    dropdowns.forEach(dropdown => {
+        const btn = dropdown.querySelector('button');
+        const content = dropdown.querySelector('.dropdown-content');
+        
+        if (!btn || !content) return;
+
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            
+            document.querySelectorAll('.dropdown-content').forEach(otherContent => {
+                if (otherContent !== content) otherContent.classList.remove('show');
+            });
+
+            content.classList.toggle('show');
+        });
+    });
+
+    document.addEventListener('click', () => {
+        document.querySelectorAll('.dropdown-content').forEach(c => c.classList.remove('show'));
+    });
+}

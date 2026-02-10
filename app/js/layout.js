@@ -3,6 +3,30 @@ import * as renderer from './renderer.js';
 import { svgCanvas } from './dom.js';
 
 /**
+ * Throttle utility to limit the rate at which a function can fire.
+ */
+export function throttle(func, limit) {
+    let lastFunc;
+    let lastRan;
+    return function() {
+        const context = this;
+        const args = arguments;
+        if (!lastRan) {
+            func.apply(context, args);
+            lastRan = Date.now();
+        } else {
+            clearTimeout(lastFunc);
+            lastFunc = setTimeout(function() {
+                if ((Date.now() - lastRan) >= limit) {
+                    func.apply(context, args);
+                    lastRan = Date.now();
+                }
+            }, limit - (Date.now() - lastRan));
+        }
+    }
+}
+
+/**
  * Layered Layout: Arranges nodes in columns.
  * Forces distribution across multiple levels based on connection structure (Sugiyama's Framework 1981).
  */

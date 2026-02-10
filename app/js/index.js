@@ -1,4 +1,4 @@
-// Entry point: importa i moduli e inizializza l'app
+// Entry point: imports modules and initializes the app
 import { state } from './state.js';
 import * as ui from './ui.js';
 import * as renderer from './renderer.js';
@@ -13,57 +13,39 @@ import {
     algorithmContainer
 } from './dom.js';
 import { getAlgorithmList } from './algorithms/registry.js';
-import { centerGraph } from './layout.js';
+import { centerGraph, throttle } from './layout.js';
 
-// Esponi funzioni globali
+// Expose global functions
 window.setMode = ui.setMode;
 
-// Inizializza i listener globali
+// Initialize global interaction listeners
 interactions.init();
 
-// Gestione Resize Finestra
-window.addEventListener('resize', () => {
-    centerGraph();
-});
+// Initialize automated UI components
+ui.initDropdowns();
 
-// Aggiorna l'UI iniziale
+// Optimized Window Resize Handling
+window.addEventListener('resize', throttle(() => {
+    centerGraph();
+}, 100));
+
+// Initial UI Update
 ui.updateUI();
 
-// Controlli Toolbar
+// Toolbar Controls
 btnAddNode.addEventListener('click', () => ui.setMode('addNode'));
 btnAddEdge.addEventListener('click', () => ui.setMode('addEdge'));
 
-// Controlli Persistenza
+// Persistence Controls
 btnSave.addEventListener('click', () => persistence.exportGraph());
 btnLoad.addEventListener('click', () => inputLoadFile.click());
 
-// Controlli Layout
-const btnLayoutMenu = document.getElementById('btn-layout-menu');
-const layoutDropdown = document.getElementById('layout-dropdown');
-const btnAlgoMenu = document.getElementById('btn-algo-menu');
-
-// Toggle Dropdowns
-btnLayoutMenu.addEventListener('click', (e) => {
-    e.stopPropagation();
-    layoutDropdown.classList.toggle('show');
-    algorithmContainer.classList.remove('show');
-});
-
-btnAlgoMenu.addEventListener('click', (e) => {
-    e.stopPropagation();
-    algorithmContainer.classList.toggle('show');
-    layoutDropdown.classList.remove('show');
-});
-
-// Close dropdowns on click outside
-document.addEventListener('click', () => {
-    layoutDropdown.classList.remove('show');
-    algorithmContainer.classList.remove('show');
-});
-
+// Layout Controls
 const handleLayoutClick = (layoutFunc) => {
     layoutFunc();
-    layoutDropdown.classList.remove('show');
+    // Dropdowns are now handled centrally for opening/closing, 
+    // but we still want to close it after a selection
+    document.querySelectorAll('.dropdown-content').forEach(c => c.classList.remove('show'));
 };
 
 btnLayoutLayered.addEventListener('click', () => handleLayoutClick(layout.applyLayeredLayout));
@@ -76,14 +58,14 @@ inputLoadFile.addEventListener('change', (e) => {
     e.target.value = '';
 });
 
-// Generazione Dinamica Pulsanti Algoritmi
+// Dynamic Algorithm Button Generation
 const algorithms = getAlgorithmList();
 algorithms.forEach(algo => {
     const btn = document.createElement('button');
-    btn.className = 'btn-dropdown-item'; // Classe aggiornata
+    btn.className = 'btn-dropdown-item';
     btn.type = 'button';
     
-    // Icona opzionale basata sul tipo di algoritmo
+    // Optional icon based on algorithm type
     let icon = 'function';
     if (algo.id === 'dijkstra') icon = 'route';
     if (algo.id === 'kruskal') icon = 'account_tree';
@@ -99,6 +81,7 @@ algorithms.forEach(algo => {
         e.stopPropagation();
         console.log(`Selected algorithm: ${algo.name}`);
         ui.handleAlgorithmClick(algo); 
+        // Close dropdown after selection
         algorithmContainer.classList.remove('show');
     });
     
