@@ -496,7 +496,7 @@ button.active {
 .divider { width: 1px; height: 24px; background: rgba(255, 255, 255, 0.2); margin: 0 5px; }
 
 /* MODALS */
-#modal-overlay {
+.modal-overlay {
     position: fixed;
     inset: 0;
     background-color: rgba(0, 0, 0, 0.5);
@@ -507,7 +507,7 @@ button.active {
     backdrop-filter: blur(3px);
 }
 
-#quick-edit-modal {
+.modal-content {
     background-color: var(--ui-bg-card);
     width: 90%;
     max-width: 600px;
@@ -527,12 +527,14 @@ button.active {
     align-items: center;
 }
 
-#btn-close-modal {
+.btn-close-modal {
     background: none;
     color: var(--text-on-dark);
     font-size: 28px;
     padding: 0;
     line-height: 1;
+    border: none;
+    cursor: pointer;
 }
 
 .modal-body {
@@ -567,13 +569,18 @@ button.active {
     box-sizing: border-box;
 }
 
+.modal-body textarea[readonly] {
+    background-color: var(--ui-bg-track);
+    cursor: text;
+}
+
 .modal-body textarea:focus {
     outline: none;
     border-color: var(--brand-primary);
     box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
 }
 
-#quick-edit-status {
+.modal-status {
     font-size: 13px;
     color: var(--brand-primary);
     font-weight: 600;
@@ -592,6 +599,8 @@ button.active {
     padding: 10px 24px;
     border-radius: 8px;
     font-weight: 700;
+    cursor: pointer;
+    border: none;
 }
 
 .btn-primary:hover {

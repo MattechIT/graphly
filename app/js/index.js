@@ -1,4 +1,6 @@
-// Entry point: imports modules and initializes the app
+/**
+ * Entry point: Initializes modules and centralizes event handling.
+ */
 import { state } from './state.js';
 import * as ui from './ui.js';
 import * as renderer from './renderer.js';
@@ -10,56 +12,97 @@ import {
     btnAddNode, btnAddEdge, 
     btnSaveJson, btnSaveText, btnLoadJson, btnLoadText, inputLoadFile,
     btnLayoutLayered, btnLayoutCompact, btnLayoutCircle, btnLayoutGrid,
-    algorithmContainer, modalOverlay, btnCloseModal, btnQuickGenerate
+    algorithmContainer, importOverlay, exportOverlay, btnQuickGenerate,
+    textareaNodes, textareaEdges, importStatus, textareaExportAll, btnCopyExport
 } from './dom.js';
 import { getAlgorithmList } from './algorithms/registry.js';
 import { centerGraph, throttle } from './layout.js';
 
-// Expose global functions
+// --- INITIALIZATION ---
 window.setMode = ui.setMode;
-
-// Initialize global interaction listeners
 interactions.init();
-
-// Initialize automated UI components
 ui.initDropdowns();
+ui.updateUI();
 
 // Optimized Window Resize Handling
 window.addEventListener('resize', throttle(() => {
     centerGraph();
 }, 100));
 
-// Initial UI Update
-ui.updateUI();
-
-// Toolbar Controls
+// --- FEATURE: EDITOR CONTROLS ---
 btnAddNode.addEventListener('click', () => ui.setMode('addNode'));
 btnAddEdge.addEventListener('click', () => ui.setMode('addEdge'));
 
-// Persistence Controls
+// --- FEATURE: FILE PERSISTENCE (JSON) ---
 btnSaveJson.addEventListener('click', () => persistence.exportGraph());
 btnLoadJson.addEventListener('click', () => inputLoadFile.click());
+inputLoadFile.addEventListener('change', (e) => {
+    persistence.importGraph(e.target.files[0]);
+    e.target.value = '';
+});
 
-// Quick Edit Modal Controls
+// --- FEATURE: QUICK TEXT EDIT (IMPORT/EXPORT) ---
+
+// Open Import Modal
 btnLoadText.addEventListener('click', () => {
-    modalOverlay.classList.remove('hidden');
-    // We could pre-fill textareaNodes and textareaEdges with current graph here later
+    const data = persistence.exportToText();
+    textareaNodes.value = data.nodes;
+    textareaEdges.value = data.edges;
+    updateImportStatus();
+    importOverlay.classList.remove('hidden');
 });
 
-btnCloseModal.addEventListener('click', () => {
-    modalOverlay.classList.add('hidden');
+// Open Export Modal
+btnSaveText.addEventListener('click', () => {
+    const data = persistence.exportToText();
+    textareaExportAll.value = `NODES:\n${data.nodes}\n\nEDGES:\n${data.edges}`;
+    exportOverlay.classList.remove('hidden');
 });
 
-// Close modal clicking on overlay
-modalOverlay.addEventListener('click', (e) => {
-    if (e.target === modalOverlay) modalOverlay.classList.add('hidden');
+// Live Import Parser Feedback
+const updateImportStatus = () => {
+    const nodes = textareaNodes.value.split(/[,\s\n]+/).filter(s => s.trim().length > 0).length;
+    const edges = textareaEdges.value.split('\n').filter(l => l.trim().length > 0).length;
+    importStatus.textContent = `Detected: ${nodes} nodes, ${edges} edges`;
+};
+
+textareaNodes.addEventListener('input', updateImportStatus);
+textareaEdges.addEventListener('input', updateImportStatus);
+
+// Generate Graph from Text
+btnQuickGenerate.addEventListener('click', () => {
+    persistence.generateGraphFromText(textareaNodes.value, textareaEdges.value);
+    importOverlay.classList.add('hidden');
 });
 
-// Layout Controls
+// Clipboard functionality
+btnCopyExport.addEventListener('click', () => {
+    navigator.clipboard.writeText(textareaExportAll.value).then(() => {
+        btnCopyExport.textContent = 'Copied!';
+        setTimeout(() => { btnCopyExport.textContent = 'Copy to Clipboard'; }, 2000);
+    }).catch(err => {
+        console.error('Failed to copy: ', err);
+        textareaExportAll.select();
+    });
+});
+
+// General Modal Closing Logic
+document.querySelectorAll('.btn-close-modal').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const modalId = btn.getAttribute('data-close');
+        document.getElementById(modalId).classList.add('hidden');
+    });
+});
+
+window.addEventListener('click', (e) => {
+    if (e.target === importOverlay) importOverlay.classList.add('hidden');
+    if (e.target === exportOverlay) exportOverlay.classList.add('hidden');
+});
+
+// --- FEATURE: GRAPH LAYOUTS ---
 const handleLayoutClick = (layoutFunc) => {
     layoutFunc();
-    // Dropdowns are now handled centrally for opening/closing, 
-    // but we still want to close it after a selection
+    // Close any open dropdowns after selection
     document.querySelectorAll('.dropdown-content').forEach(c => c.classList.remove('show'));
 };
 
@@ -68,19 +111,13 @@ btnLayoutCompact.addEventListener('click', () => handleLayoutClick(layout.applyC
 btnLayoutCircle.addEventListener('click', () => handleLayoutClick(layout.applyCircleLayout));
 btnLayoutGrid.addEventListener('click', () => handleLayoutClick(layout.applyGridLayout));
 
-inputLoadFile.addEventListener('change', (e) => {
-    persistence.importGraph(e.target.files[0]);
-    e.target.value = '';
-});
-
-// Dynamic Algorithm Button Generation
+// --- FEATURE: ALGORITHM EXECUTION ---
 const algorithms = getAlgorithmList();
 algorithms.forEach(algo => {
     const btn = document.createElement('button');
     btn.className = 'btn-dropdown-item';
     btn.type = 'button';
     
-    // Optional icon based on algorithm type
     let icon = 'function';
     if (algo.id === 'dijkstra') icon = 'route';
     if (algo.id === 'kruskal') icon = 'account_tree';
@@ -94,9 +131,7 @@ algorithms.forEach(algo => {
     
     btn.addEventListener('click', (e) => {
         e.stopPropagation();
-        console.log(`Selected algorithm: ${algo.name}`);
         ui.handleAlgorithmClick(algo); 
-        // Close dropdown after selection
         algorithmContainer.classList.remove('show');
     });
     

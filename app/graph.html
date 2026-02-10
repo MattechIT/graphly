@@ -81,13 +81,13 @@
                         <span class="material-symbols-outlined dropdown-arrow">arrow_drop_down</span>
                     </button>
                     <div id="save-dropdown" class="dropdown-content">
-                        <button id="btn-save-json" class="btn-dropdown-item">
-                            <span class="material-symbols-outlined">javascript</span>
-                            <span class="btn-text">As JSON (.json)</span>
-                        </button>
                         <button id="btn-save-text" class="btn-dropdown-item">
                             <span class="material-symbols-outlined">description</span>
-                            <span class="btn-text">As Text (List)</span>
+                            <span class="btn-text">As Text</span>
+                        </button>
+                        <button id="btn-save-json" class="btn-dropdown-item">
+                            <span class="material-symbols-outlined">javascript</span>
+                            <span class="btn-text">As JSON</span>
                         </button>
                     </div>
                 </div>
@@ -98,13 +98,13 @@
                         <span class="material-symbols-outlined dropdown-arrow">arrow_drop_down</span>
                     </button>
                     <div id="load-dropdown" class="dropdown-content">
+                        <button id="btn-load-text" class="btn-dropdown-item">
+                            <span class="material-symbols-outlined">edit_note</span>
+                            <span class="btn-text">From Text</span>
+                        </button>
                         <button id="btn-load-json" class="btn-dropdown-item">
                             <span class="material-symbols-outlined">file_open</span>
                             <span class="btn-text">From JSON File</span>
-                        </button>
-                        <button id="btn-load-text" class="btn-dropdown-item">
-                            <span class="material-symbols-outlined">edit_note</span>
-                            <span class="btn-text">From Text (Quick)</span>
                         </button>
                     </div>
                 </div>
@@ -181,12 +181,12 @@
         </div>
     </main>
 
-    <!-- Quick Text Import/Export Modal -->
-    <div id="modal-overlay" class="hidden">
-        <div id="quick-edit-modal">
+    <!-- Import Modal -->
+    <div id="import-overlay" class="modal-overlay hidden">
+        <div class="modal-content">
             <div class="modal-header">
-                <h3>Quick Text Edit</h3>
-                <button id="btn-close-modal">&times;</button>
+                <h3>Import Graph from Text</h3>
+                <button class="btn-close-modal" data-close="import-overlay">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="input-group">
@@ -197,10 +197,27 @@
                     <label for="text-edges">Edges List (e.g. A B 10)</label>
                     <textarea id="text-edges" placeholder="A B 10&#10;B C 5/100..."></textarea>
                 </div>
-                <div id="quick-edit-status">Detected: 0 nodes, 0 edges</div>
+                <div id="import-status" class="modal-status">Detected: 0 nodes, 0 edges</div>
             </div>
             <div class="modal-footer">
                 <button id="btn-quick-generate" class="btn-primary">Generate Graph</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Export Modal -->
+    <div id="export-overlay" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Export Graph Data</h3>
+                <button class="btn-close-modal" data-close="export-overlay">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p style="font-size: 14px; color: var(--text-main);">Copy the text below to share your graph:</p>
+                <textarea id="text-export-all" readonly style="height: 200px;"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button id="btn-copy-export" class="btn-primary">Copy to Clipboard</button>
             </div>
         </div>
     </div>
