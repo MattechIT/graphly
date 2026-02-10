@@ -127,7 +127,7 @@ export function handleNodePointerDown(e, nodeId) {
         state.tempEdgeLine = line;
 
         ui.hideFloatingPanel();
-    } else if (state.currentMode === null) {
+    } else if (state.currentMode === null && !state.isAlgorithmRunning) {
         state.draggedNodeData = nodeData;
         state.draggedNodeData.startX = nodeData.x;
         state.draggedNodeData.startY = nodeData.y;
