@@ -1,6 +1,7 @@
 import { state } from './state.js';
 import * as ui from './ui.js';
 import * as renderer from './renderer.js';
+import { PLAYBACK_SPEED } from './config.js';
 import { 
     btnPlayerBack, btnPlayerPlay, btnPlayerNext, btnPlayerStop, 
     btnPlayerStart, btnPlayerEnd,
@@ -8,7 +9,6 @@ import {
 } from './dom.js';
 
 // Player Configuration
-const PLAYBACK_SPEED = 2000;
 let playbackTimer = null;
 
 // Loads an algorithm sequence and starts algorithm mode

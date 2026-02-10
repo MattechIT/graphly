@@ -1,6 +1,7 @@
 import { state } from './state.js';
 import { floatingPanel, infoText, btnAddNode, btnAddEdge, svgCanvas } from './dom.js';
 import { centerGraph } from './layout.js';
+import { LABEL_MAX_LENGTH } from './config.js';
 
 // Shows the floating panel near the provided client coordinates
 export function showFloatingPanel(clientX, clientY, type, id) {
@@ -30,9 +31,9 @@ export function showFloatingPanel(clientX, clientY, type, id) {
         const node = state.nodes.find(n => n.id === id);
         if (node) {
             const row = createInputRow('Name', 'text', node.userLabel, (val) => {
-                node.userLabel = val.substring(0, 2);
+                node.userLabel = val.substring(0, LABEL_MAX_LENGTH);
                 import('./renderer.js').then(r => r.updateNodeVisuals(node));
-            }, 2);
+            }, LABEL_MAX_LENGTH);
             floatingPanel.appendChild(row);
             
             addDeleteButton(() => import('./renderer.js').then(r => r.removeNode(id)));

@@ -1,4 +1,4 @@
-import { NODE_RADIUS } from './config.js';
+import { NODE_RADIUS, LABEL_MAX_LENGTH } from './config.js';
 import { state } from './state.js';
 import { nodesLayer, edgesLayer, dragLayer } from './dom.js';
 import { calculateEdgeGeometry } from './geometry.js';
@@ -26,7 +26,7 @@ export function createNode(x = 0, y = 0, forcedId = null, forcedLabel = null) {
 
     const id = forcedId || `node-${state.nodeIdCounter++}`;
     const defaultLabel = forcedId ? (forcedId.includes('-') ? forcedId.split('-')[1] : forcedId) : (state.nodeIdCounter - 1).toString();
-    const userLabelText = forcedLabel || defaultLabel;
+    const userLabelText = (forcedLabel || defaultLabel).substring(0, LABEL_MAX_LENGTH);
 
     circle.setAttribute("cx", x);
     circle.setAttribute("cy", y);

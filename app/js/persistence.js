@@ -1,6 +1,7 @@
 import { state } from './state.js';
 import * as renderer from './renderer.js';
 import * as interactions from './interactions.js';
+import { LABEL_MAX_LENGTH } from './config.js';
 
 /**
  * Export graph in json.
@@ -63,7 +64,7 @@ export function generateGraphFromText(nodesStr, edgesStr) {
     const nameToId = new Map();
 
     nodeNames.forEach(name => {
-        const node = renderer.createNode(0, 0, null, name.substring(0, 2));
+        const node = renderer.createNode(0, 0, null, name.substring(0, LABEL_MAX_LENGTH));
         interactions.attachNodeListeners(node);
         nameToId.set(name, node.id);
     });

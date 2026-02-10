@@ -17,6 +17,7 @@ import {
 } from './dom.js';
 import { getAlgorithmList } from './algorithms/registry.js';
 import { centerGraph, throttle } from './layout.js';
+import { THROTTLE_DELAY } from './config.js';
 
 // --- INITIALIZATION ---
 window.setMode = ui.setMode;
@@ -29,7 +30,7 @@ window.addEventListener('resize', throttle(() => {
     // Completely skip resize logic if any modal is open to prevent mobile keyboard glitches
     if (!importOverlay.classList.contains('hidden') || !exportOverlay.classList.contains('hidden')) return;
     centerGraph();
-}, 100));
+}, THROTTLE_DELAY));
 
 // --- FEATURE: EDITOR CONTROLS ---
 btnAddNode.addEventListener('click', () => ui.setMode('addNode'));

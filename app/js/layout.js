@@ -1,6 +1,7 @@
 import { state } from './state.js';
 import * as renderer from './renderer.js';
 import { svgCanvas } from './dom.js';
+import { DEFAULT_PADDING } from './config.js';
 
 /**
  * Throttle utility to limit the rate at which a function can fire.
@@ -36,7 +37,7 @@ export function applyLayeredLayout() {
     const rect = svgCanvas.getBoundingClientRect();
     const width = rect.width || 800;
     const height = rect.height || 600;
-    const padding = 100;
+    const padding = DEFAULT_PADDING;
 
     // 1. Calculate In-Degree to find roots
     const inDegree = {};
@@ -102,7 +103,7 @@ export function applyCompactLayout() {
     const rect = svgCanvas.getBoundingClientRect();
     const width = rect.width || 800;
     const height = rect.height || 600;
-    const padding = 100;
+    const padding = DEFAULT_PADDING;
 
     // Sort nodes by numerical ID
     const sortedNodes = [...state.nodes].sort((a, b) => {
@@ -174,7 +175,7 @@ export function applyGridLayout() {
     const rect = svgCanvas.getBoundingClientRect();
     const width = rect.width || 800;
     const height = rect.height || 600;
-    const padding = 80;
+    const padding = DEFAULT_PADDING;
 
     const cols = Math.ceil(Math.sqrt(state.nodes.length));
     const cellW = (width - 2 * padding) / Math.max(1, cols - 1);
@@ -200,7 +201,7 @@ export function centerGraph() {
     const rect = svgCanvas.getBoundingClientRect();
     const canvasWidth = rect.width;
     const canvasHeight = rect.height;
-    const padding = 60;
+    const padding = DEFAULT_PADDING - 20;
 
     if (canvasWidth <= 0 || canvasHeight <= 0) return;
 
