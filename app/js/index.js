@@ -1,11 +1,8 @@
 /**
  * Entry point: Initializes modules and centralizes event handling.
  */
-import { state } from './state.js';
 import * as ui from './ui.js';
-import * as renderer from './renderer.js';
 import * as interactions from './interactions.js';
-import * as player from './player.js';
 import * as persistence from './persistence.js';
 import * as layout from './layout.js';
 import { 
