@@ -39,7 +39,7 @@ export function exportGraph() {
 }
 
 /**
- * Import graph to json file.
+ * Import graph from json file.
  * @param {File} file 
  */
 export function importGraph(file) {
@@ -82,7 +82,7 @@ function loadGraphData(data) {
         renderer.createEdge(e.source, e.target, e.weight || 1, e.id || null);
     });
 
-    //Update ID counters
+    // Update ID counters
     syncIdCounters(data.nodes, data.edges);
 
     if (missingCoords) {
@@ -91,14 +91,14 @@ function loadGraphData(data) {
         });
     }
 
-    console.log("Import successfully");
+    console.log("Import successful");
 }
 
 /**
  * Utility functions to sync global ID counters of imported elements.
  */
 function syncIdCounters(nodes, edges) {
-    // Estract numbers from ID
+    // Extract numbers from ID
     const nodeIds = nodes.map(n => {
         const match = n.id.match(/\d+/);
         return match ? parseInt(match[0], 10) : 0;

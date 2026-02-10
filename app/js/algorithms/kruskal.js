@@ -50,10 +50,10 @@ export function run(nodes, edges, params) {
     for (const edge of sortedEdges) {
         const edgeLabel = `${getNodeLabel(edge.source)}-${getNodeLabel(edge.target)}`;
         
-        // --- STEP: ANALISI ---
-        // Se l'arco precedente era stato scartato, lo resettiamo in questo step
+        // --- STEP: ANALYSIS ---
+        // If the previous edge was discarded, reset it in this step
         const analysisChanges = {
-            edges: [{ id: edge.id, color: "var(--alg-highlight)" }] // Giallo: in analisi
+            edges: [{ id: edge.id, color: "var(--alg-highlight)" }] // Yellow: analyzing
         };
         if (lastDiscardedEdgeId) {
             analysisChanges.edges.push({ id: lastDiscardedEdgeId, resetStyle: true });
@@ -69,7 +69,7 @@ export function run(nodes, edges, params) {
         const root2 = find(edge.target);
 
         if (root1 !== root2) {
-            // --- STEP: SUCCESSO (MST) ---
+            // --- STEP: SUCCESS (MST) ---
             union(edge.source, edge.target);
             mstEdges.push(edge);
 
@@ -84,8 +84,8 @@ export function run(nodes, edges, params) {
                 }
             });
         } else {
-            // --- STEP: SCARTO (CICLO) ---
-            lastDiscardedEdgeId = edge.id; // Segniamo per resettarlo al prossimo giro
+            // --- STEP: DISCARD (CYCLE) ---
+            lastDiscardedEdgeId = edge.id; // Mark for reset in the next iteration
             steps.push({
                 description: `Edge ${edgeLabel} forms a cycle. Discarded.`,
                 changes: {
@@ -95,7 +95,7 @@ export function run(nodes, edges, params) {
         }
     }
 
-    // Reset finale per l'ultimo eventuale arco scartato
+    // Final reset for the last discarded edge (if any)
     const finalChanges = {
         edges: mstEdges.map(e => ({ id: e.id, color: "var(--alg-path)", width: 4 })),
         nodes: nodes.map(n => ({ id: n.id, color: "var(--alg-path)" }))

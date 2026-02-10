@@ -7,32 +7,32 @@ import {
     playerStepInfo, logList 
 } from './dom.js';
 
-// Configurazione Player
+// Player Configuration
 const PLAYBACK_SPEED = 2000;
 let playbackTimer = null;
 
-// Carica una sequenza di passi e avvia la modalità algoritmo
+// Loads an algorithm sequence and starts algorithm mode
 export function loadAlgorithm(steps) {
     state.algorithmSteps = steps;
     state.currentStepIndex = -1;
     state.playbackPaused = true;
 
-    // Entra in modalità visualizzazione
+    // Enter visualization mode
     ui.setAlgorithmMode(true);
     updateControls();
     
-    // Esegui reset visivo iniziale per sicurezza
+    // Initial visual reset for safety
     resetVisuals();
 }
 
-// Avvia la riproduzione automatica
+// Starts auto-playback
 export function play() {
     state.playbackPaused = false;
     updateControls();
     runAutoPlay();
 }
 
-// Mette in pausa
+// Pauses playback
 export function pause() {
     state.playbackPaused = true;
     if (playbackTimer) {
@@ -42,7 +42,7 @@ export function pause() {
     updateControls();
 }
 
-// Interrompe tutto e torna all'editor
+// Stops algorithm mode and returns to editor
 export function stop() {
     pause();
     state.algorithmSteps = [];
@@ -51,9 +51,9 @@ export function stop() {
     ui.setAlgorithmMode(false);
 }
 
-// Avanza di uno step
+// Advances by one step
 export function next() {
-    // Se siamo alla fine, non fare nulla
+    // If at the end, do nothing
     if (state.currentStepIndex >= state.algorithmSteps.length - 1) {
         pause();
         return;
@@ -66,24 +66,24 @@ export function next() {
     addLogEntry(step, state.currentStepIndex);
     updateControls();
     
-    return true; // Ha eseguito uno step
+    return true; // Successfully performed a step
 }
 
-// Torna indietro di uno step
+// Goes back by one step
 export function back() {
     if (state.currentStepIndex < 0) return;
 
-    // Pausa automatica quando si naviga manualmente
+    // Auto-pause when navigating manually
     pause();
 
     const targetIndex = state.currentStepIndex - 1;
     
-    // Reset completo
+    // Full reset
     resetVisuals();
     logList.innerHTML = '';
     state.currentStepIndex = -1;
 
-    // Riesegui velocemente fino allo step precedente
+    // Re-execute quickly up to the previous step
     for (let i = 0; i <= targetIndex; i++) {
         state.currentStepIndex = i;
         const step = state.algorithmSteps[i];
@@ -94,7 +94,7 @@ export function back() {
     updateControls();
 }
 
-// Torna all'inizio (resetta visualizzazione ma mantiene algoritmo caricato)
+// Goes to the start (resets visualization but keeps algorithm loaded)
 export function goToStart() {
     pause();
     resetVisuals();
@@ -103,20 +103,20 @@ export function goToStart() {
     updateControls();
 }
 
-// Vai direttamente alla fine
+// Goes directly to the end
 export function goToEnd() {
     pause();
     const total = state.algorithmSteps.length;
     if (total === 0) return;
 
-    // Se siamo già alla fine, inutile rifare tutto
+    // If already at the end, do nothing
     if (state.currentStepIndex >= total - 1) return;
 
-    // Esegui tutto velocemente senza delay
-    // Ottimizzazione: potremmo saltare il rendering intermedio, 
-    // ma per semplicità e correttezza (dipendenza incrementale) rieseguiamo applyStep
+    // Execute everything quickly without delay
+    // Optimization: we could skip intermediate rendering, 
+    // but for simplicity and correctness (incremental dependencies), we re-run applyStep
     
-    // Se siamo all'inizio, partiamo da 0, altrimenti continuiamo da dove siamo
+    // Start from current position or beginning
     const startIndex = state.currentStepIndex + 1;
     
     for (let i = startIndex; i < total; i++) {
@@ -129,7 +129,7 @@ export function goToEnd() {
     updateControls();
 }
 
-// Loop ricorsivo per l'autoplay
+// Recursive loop for autoplay
 function runAutoPlay() {
     if (state.playbackPaused) return;
     
@@ -137,15 +137,15 @@ function runAutoPlay() {
     if (didStep) {
         playbackTimer = setTimeout(runAutoPlay, PLAYBACK_SPEED);
     } else {
-        pause(); // Finito
+        pause(); // Finished
     }
 }
 
-// Applica le modifiche visive di un singolo oggetto Step
+// Applies visual changes from a single Step object
 function applyStep(step) {
-    // step struttura attesa: 
+    // expected step structure: 
     // { 
-    //   description: "Testo log", 
+    //   description: "Log text", 
     //   changes: { 
     //      nodes: [ { id, color, algLabel, borderColor } ], 
     //      edges: [ { id, color, flow, saturated } ] 
@@ -154,7 +154,7 @@ function applyStep(step) {
 
     if (!step.changes) return;
 
-    // Modifiche Nodi
+    // Node changes
     if (step.changes.nodes) {
         step.changes.nodes.forEach(change => {
             const node = state.nodes.find(n => n.id === change.id);
@@ -164,11 +164,11 @@ function applyStep(step) {
                 node.algLabel = change.algLabel;
             }
             
-            // Gestione Colori
+            // Color Management
             if (change.color) node.el.style.fill = change.color;
             if (change.borderColor) node.el.style.stroke = change.borderColor;
             
-            // Reset Stile
+            // Style Reset
             if (change.resetStyle) {
                 node.el.style.fill = '';
                 node.el.style.stroke = '';
@@ -178,7 +178,7 @@ function applyStep(step) {
         });
     }
 
-    // Modifiche Archi
+    // Edge changes
     if (step.changes.edges) {
         step.changes.edges.forEach(change => {
             const edge = state.edges.find(e => e.id === change.id);
@@ -190,12 +190,12 @@ function applyStep(step) {
             // Sync base visuals (labels, saturation color) first
             renderer.updateEdgeVisuals(edge);
 
-            // Colore Temporaneo (es. evidenziato in giallo durante scansione)
+            // Temporary Color (e.g., highlighted in yellow during scan)
             if (change.color) {
                 edge.el.style.stroke = change.color;
             }
 
-            // Larghezza Temporanea (es. evidenziato in grassetto per path finale)
+            // Temporary Width (e.g., bold for final path)
             if (change.width) {
                 edge.el.style.strokeWidth = change.width + "px";
             } else if (!edge.isSaturated) {
@@ -205,7 +205,7 @@ function applyStep(step) {
     }
 }
 
-// Resetta tutto il grafo allo stato pulito
+// Resets the entire graph to a clean state
 function resetVisuals() {
     state.nodes.forEach(n => {
         n.algLabel = "";
@@ -222,13 +222,13 @@ function resetVisuals() {
     });
 }
 
-// Aggiunge riga al log laterale
+// Adds a row to the sidebar log
 function addLogEntry(step, index) {
     const li = document.createElement('li');
-    li.innerHTML = `<strong>Passo ${index + 1}:</strong> ${step.description}`;
+    li.innerHTML = `<strong>Step ${index + 1}:</strong> ${step.description}`;
     li.classList.add('current');
     
-    // Rimuovi highlight dai precedenti
+    // Remove highlight from previous entries
     const siblings = logList.querySelectorAll('li');
     siblings.forEach(s => s.classList.remove('current'));
     
@@ -236,7 +236,7 @@ function addLogEntry(step, index) {
     li.scrollIntoView({ behavior: 'smooth', block: 'end' });
 }
 
-// Aggiorna stato pulsanti UI
+// Updates UI button states
 function updateControls() {
     const total = state.algorithmSteps.length;
     const currentDisplay = state.currentStepIndex + 1;
@@ -249,17 +249,17 @@ function updateControls() {
         playIcon.textContent = state.playbackPaused ? "play_arrow" : "pause";
     }
     
-    // Se siamo all'inizio, Back disabilitato
+    // If at the start, Disable Back
     btnPlayerBack.disabled = state.currentStepIndex < 0;
     btnPlayerStart.disabled = state.currentStepIndex < 0;
     
-    // Se siamo alla fine, Next disabilitato
+    // If at the end, Disable Next
     btnPlayerNext.disabled = state.currentStepIndex >= total - 1;
     btnPlayerEnd.disabled = state.currentStepIndex >= total - 1;
 }
 
 // --- EVENT LISTENERS ---
-// Vengono attaccati una volta sola all'importazione del modulo
+// Attached once during module import
 
 if (btnPlayerPlay) {
     btnPlayerPlay.addEventListener('click', () => {
@@ -268,7 +268,7 @@ if (btnPlayerPlay) {
     });
 
     btnPlayerNext.addEventListener('click', () => {
-        pause(); // Stop autoplay se interagisco manualmente
+        pause(); // Stop autoplay if interacting manually
         next();
     });
 

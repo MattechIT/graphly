@@ -21,7 +21,7 @@ export function createNode(x = 0, y = 0, forcedId = null, forcedLabel = null) {
 
     // If forcedId is present (import), we use that, otherwise we increment the counter
     const id = forcedId || `node-${state.nodeIdCounter++}`;
-    // If no forced Label, try get it from id
+    // If no forced Label, try to get it from id
     const defaultLabel = forcedId ? (forcedId.includes('-') ? forcedId.split('-')[1] : forcedId) : (state.nodeIdCounter - 1).toString();
     const userLabelText = forcedLabel || defaultLabel;
 
@@ -31,14 +31,14 @@ export function createNode(x = 0, y = 0, forcedId = null, forcedLabel = null) {
     circle.setAttribute("class", "node");
     circle.setAttribute("id", id);
 
-    // Etichetta Utente (Centro del nodo)
+    // User Label (Node Center)
     const label = document.createElementNS(NS, "text");
     label.setAttribute("x", x);
     label.setAttribute("y", y);
     label.setAttribute("class", "node-label");
     label.textContent = userLabelText;
 
-    // Etichetta Algoritmo (Sopra il nodo)
+    // Algorithm Label (Above Node)
     const algLabel = document.createElementNS(NS, "text");
     algLabel.setAttribute("x", x);
     algLabel.setAttribute("y", y - NODE_RADIUS - 5);
@@ -81,7 +81,7 @@ export function createEdge(sourceId, targetId, forcedWeight = null, forcedId = n
 
     const edgeId = forcedId || `edge-${sourceId}-${targetId}`;
     
-    // Gruppo per l'arco e la sua etichetta
+    // Group for the edge and its label
     const group = document.createElementNS(NS, "g");
     group.setAttribute("id", `group-${edgeId}`);
 
@@ -89,17 +89,17 @@ export function createEdge(sourceId, targetId, forcedWeight = null, forcedId = n
     path.setAttribute("class", "edge");
     path.setAttribute("marker-end", "url(#arrowhead)");
     path.setAttribute("id", edgeId);
-    path.setAttribute("fill", "none"); // Importante per i path
+    path.setAttribute("fill", "none"); // Important for paths
 
     const hitArea = document.createElementNS(NS, "path");
     hitArea.setAttribute("class", "edge-hitarea");
     hitArea.setAttribute("data-edge-id", edgeId);
     hitArea.setAttribute("fill", "none");
 
-    // Testo del peso/flusso
+    // Weight/Flow text
     const text = document.createElementNS(NS, "text");
     text.setAttribute("class", "edge-label");
-    // Gli attributi di stile ora sono gestiti dal CSS (.edge-label)
+    // Style attributes are now handled by CSS (.edge-label)
 
     group.appendChild(path);
     group.appendChild(hitArea);
@@ -122,8 +122,8 @@ export function createEdge(sourceId, targetId, forcedWeight = null, forcedId = n
 
     state.edges.push(edgeData);
     
-    // Aggiorniamo la geometria di ENTRAMBI gli archi se esiste una connessione inversa
-    // per assicurarci che si curvino subito
+    // Update geometry of BOTH edges if a reverse connection exists
+    // to ensure they curve immediately
     const reverseEdge = state.edges.find(e => e.source === targetId && e.target === sourceId);
     
     updateEdgeGeometry(edgeData);
@@ -150,7 +150,7 @@ export function updateEdgeGeometry(edge) {
     const targetNode = state.nodes.find(n => n.id === edge.target);
     if (!sourceNode || !targetNode) return;
 
-    // Controlla se esiste un arco inverso
+    // Check if a reverse edge exists
     const hasReverse = state.edges.some(e => e.source === edge.target && e.target === edge.source);
 
     const dx = targetNode.x - sourceNode.x;
@@ -159,16 +159,16 @@ export function updateEdgeGeometry(edge) {
     
     if (dist === 0) return;
 
-    // Vettori unitari
+    // Unit vectors
     const ux = dx / dist;
     const uy = dy / dist;
     
-    // Vettore perpendicolare (normalizzato) per la curvatura
-    // (-uy, ux) ruota di 90 gradi
+    // Perpendicular vector (normalized) for curvature
+    // (-uy, ux) rotates 90 degrees
     const perpX = -uy;
     const perpY = ux;
 
-    // Calcolo punti di partenza e arrivo sul bordo dei nodi
+    // Calculate start and end points on node borders
     const startX = sourceNode.x + ux * NODE_RADIUS;
     const startY = sourceNode.y + uy * NODE_RADIUS;
     const endX = targetNode.x - ux * NODE_RADIUS;
@@ -178,12 +178,12 @@ export function updateEdgeGeometry(edge) {
     let labelX, labelY;
 
     if (hasReverse) {
-        // Curvatura quadratica di Bézier
-        // Offset determina quanto "spancia" l'arco. 
-        // 40 è un valore arbitrario che funziona bene visivamente
+        // Quadratic Bézier curvature
+        // Offset determines how much the edge "bulges".
+        // 40 is an arbitrary value that works well visually
         const offset = 40; 
         
-        // Punto di controllo: punto medio + spostamento perpendicolare
+        // Control point: midpoint + perpendicular displacement
         const midX = (startX + endX) / 2;
         const midY = (startY + endY) / 2;
         
@@ -192,44 +192,44 @@ export function updateEdgeGeometry(edge) {
 
         dString = `M ${startX} ${startY} Q ${ctrlX} ${ctrlY} ${endX} ${endY}`;
 
-        // Posizione etichetta: a metà della curva (approx al punto di controllo intermedio)
-        // La formula esatta per t=0.5 su una curva quadratica è: 
+        // Label position: middle of the curve (approx at the intermediate control point)
+        // The exact formula for t=0.5 on a quadratic curve is: 
         // B(t) = (1-t)^2 * P0 + 2(1-t)t * P1 + t^2 * P2
-        // Per t=0.5: 0.25*P0 + 0.5*P1 + 0.25*P2
+        // For t=0.5: 0.25*P0 + 0.5*P1 + 0.25*P2
         labelX = 0.25 * startX + 0.5 * ctrlX + 0.25 * endX;
         labelY = 0.25 * startY + 0.5 * ctrlY + 0.25 * endY;
         
-        // Spostiamo leggermente l'etichetta ancora più "fuori" per non toccare la linea
+        // Shift label slightly further "out" to avoid touching the line
         labelX += perpX * 10;
         labelY += perpY * 10;
 
     } else {
-        // Linea retta semplice
+        // Simple straight line
         dString = `M ${startX} ${startY} L ${endX} ${endY}`;
         
-        // Etichetta nel punto medio preciso
+        // Label at the exact midpoint
         labelX = (startX + endX) / 2;
         labelY = (startY + endY) / 2;
         
-        // Spostamento standard verso l'alto (perpendicolare negativo) per non coprire la linea
-        // Usiamo il vettore perpendicolare per mantenere la distanza costante indipendentemente dall'angolo
+        // Standard upward displacement (negative perpendicular) to avoid covering the line
+        // Use the perpendicular vector to keep the distance constant regardless of the angle
         labelX += perpX * 15;
         labelY += perpY * 15;
     }
 
-    // Applica il path
+    // Apply path
     edge.el.setAttribute("d", dString);
     edge.hitArea.setAttribute("d", dString);
 
-    // Applica posizione etichetta
+    // Apply label position
     edge.labelEl.setAttribute("x", labelX);
     edge.labelEl.setAttribute("y", labelY);
 }
 
 export function updateEdgeVisuals(edge) {
-    const isFlowMode = state.isAlgorithmRunning; // Semplificazione per ora
+    const isFlowMode = state.isAlgorithmRunning; // Simplification for now
     
-    // Gestione orientamento: se l'algoritmo è di tipo 'undirected', nascondiamo le frecce
+    // Orientation handling: if algorithm is 'undirected', hide arrowheads
     const isUndirected = state.isAlgorithmRunning && state.selectedAlgorithm?.graphType === "undirected";
     if (isUndirected) {
         edge.el.removeAttribute("marker-end");

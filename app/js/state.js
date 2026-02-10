@@ -1,36 +1,36 @@
-// Stato centrale dell'applicazione: oggetti mutabili condivisi tra moduli
+// Central application state: shared mutable objects between modules
 export const state = {
-    // Modalità dell'editor: null | 'addNode' | 'addEdge'
+    // Editor mode: null | 'addNode' | 'addEdge'
     currentMode: null,
 
-    // Collezioni
+    // Collections
     // nodes: { id, x, y, el, labelEl, userLabel, algLabel }
     nodes: [], 
     // edges: { id, source, target, el, hitArea, weight, capacity, flow, isSaturated }
     edges: [],
 
-    // Contatori
+    // Counters
     nodeIdCounter: 0,
     edgeIdCounter: 0,
 
-    // Stato temporaneo di interazione
+    // Temporary interaction state
     draggedNodeData: null,
     isDraggingEdge: false,
     edgeStartNodeDOM: null,
     tempEdgeLine: null,
     hoveredTargetNodeDOM: null,
 
-    // Pannello flottante
+    // Floating panel
     selectedElement: null,
 
-    // [NUOVO] Stato Algoritmi e Player
+    // Algorithm and Player State
     isAlgorithmRunning: false,
     algorithmSteps: [],
     currentStepIndex: -1,
     playbackPaused: true,
     playbackTimer: null,
     
-    // Stato selezione dinamica
+    // Dynamic selection state
     selectedAlgorithm: null,
     algorithmParams: {},
     selectionStep: 0
