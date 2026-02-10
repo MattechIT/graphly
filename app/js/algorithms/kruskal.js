@@ -40,7 +40,7 @@ export function run(nodes, edges, params) {
     steps.push({
         description: "Algorithm started. Edges sorted by weight.",
         changes: {
-            nodes: nodes.map(n => ({ id: n.id, color: "white" }))
+            nodes: nodes.map(n => ({ id: n.id, color: "var(--ui-bg-card)" }))
         }
     });
 
@@ -53,7 +53,7 @@ export function run(nodes, edges, params) {
         // --- STEP: ANALISI ---
         // Se l'arco precedente era stato scartato, lo resettiamo in questo step
         const analysisChanges = {
-            edges: [{ id: edge.id, color: "#f1c40f" }] // Giallo: in analisi
+            edges: [{ id: edge.id, color: "var(--alg-highlight)" }] // Giallo: in analisi
         };
         if (lastDiscardedEdgeId) {
             analysisChanges.edges.push({ id: lastDiscardedEdgeId, resetStyle: true });
@@ -76,10 +76,10 @@ export function run(nodes, edges, params) {
             steps.push({
                 description: `Edge ${edgeLabel} connects two disjoint sets. Added to MST.`,
                 changes: {
-                    edges: [{ id: edge.id, color: "#2ecc71", width: 4 }],
+                    edges: [{ id: edge.id, color: "var(--alg-success)", width: 4 }],
                     nodes: [
-                        { id: edge.source, color: "#2ecc71" }, 
-                        { id: edge.target, color: "#2ecc71" }
+                        { id: edge.source, color: "var(--alg-success)" }, 
+                        { id: edge.target, color: "var(--alg-success)" }
                     ]
                 }
             });
@@ -89,7 +89,7 @@ export function run(nodes, edges, params) {
             steps.push({
                 description: `Edge ${edgeLabel} forms a cycle. Discarded.`,
                 changes: {
-                    edges: [{ id: edge.id, color: "#e74c3c", width: 2 }]
+                    edges: [{ id: edge.id, color: "var(--alg-error)", width: 2 }]
                 }
             });
         }
@@ -97,8 +97,8 @@ export function run(nodes, edges, params) {
 
     // Reset finale per l'ultimo eventuale arco scartato
     const finalChanges = {
-        edges: mstEdges.map(e => ({ id: e.id, color: "#3498db", width: 4 })),
-        nodes: nodes.map(n => ({ id: n.id, color: "#3498db" }))
+        edges: mstEdges.map(e => ({ id: e.id, color: "var(--alg-path)", width: 4 })),
+        nodes: nodes.map(n => ({ id: n.id, color: "var(--alg-path)" }))
     };
     if (lastDiscardedEdgeId) {
         finalChanges.edges.push({ id: lastDiscardedEdgeId, resetStyle: true });

@@ -151,7 +151,7 @@ export function handleNodeMouseDown(e, nodeId) {
         line.setAttribute('y2', nodeData.y);
         // classe e attributi espliciti per garantire visibilità durante il drag
         line.setAttribute('class', 'drag-edge');
-        line.setAttribute('stroke', '#95a5a6');
+        line.setAttribute('stroke', 'var(--text-light)');
         line.setAttribute('stroke-width', '2');
         line.setAttribute('stroke-dasharray', '6,4');
         line.setAttribute('marker-end', 'url(#arrowhead-drag)');

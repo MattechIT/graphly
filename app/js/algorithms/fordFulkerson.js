@@ -29,8 +29,8 @@ export function run(nodes, edges, params) {
         description: `Starting Max Flow from ${getNodeLabel(sourceId)} to ${getNodeLabel(sinkId)}. Initial flow is 0.`,
         changes: {
             nodes: [
-                { id: sourceId, color: "#f1c40f", algLabel: `[-, ∞]` },
-                { id: sinkId, color: "#3498db", algLabel: `[?, ?]` }
+                { id: sourceId, color: "var(--alg-highlight)", algLabel: `[-, ∞]` },
+                { id: sinkId, color: "var(--alg-path)", algLabel: `[?, ?]` }
             ],
             edges: edges.map(e => ({ id: e.id, flow: 0, saturated: false }))
         }
@@ -118,7 +118,7 @@ export function run(nodes, edges, params) {
                         nodes: neighborsToVisit.map(n => ({
                             id: n.id,
                             algLabel: `[${n.label.pred}, ${n.label.cap === Infinity ? '∞' : n.label.cap}]`,
-                            color: "#e67e22" // Visiting
+                            color: "var(--alg-searching)" // Visiting
                         }))
                     }
                 });
@@ -137,7 +137,7 @@ export function run(nodes, edges, params) {
             const p = parent[curr];
             pathVisuals.push({ 
                 id: p.edge.id, 
-                color: "#f1c40f", // Highlight path
+                color: "var(--alg-highlight)", // Highlight path
                 width: 4 
             });
             pathNodes.unshift(getNodeLabel(curr));
@@ -170,7 +170,7 @@ export function run(nodes, edges, params) {
                 id: p.edge.id,
                 flow: p.edge.flow,
                 saturated: isSaturated,
-                color: "#2ecc71",
+                color: "var(--alg-success)",
                 width: 4
             });
             
@@ -183,7 +183,7 @@ export function run(nodes, edges, params) {
             description: `Augmented flow by ${pathFlow}. New Total Flow: ${maxFlow}.`,
             changes: {
                 edges: augmentVisuals,
-                nodes: Array.from(visited).map(id => ({ id: id, color: "" })) 
+                nodes: Array.from(visited).map(id => ({ id: id, resetStyle: true })) 
             }
         });
         
@@ -198,7 +198,7 @@ export function run(nodes, edges, params) {
     steps.push({
         description: `Algorithm complete. Maximum Flow: ${maxFlow}.`,
         changes: {
-             nodes: [{ id: sinkId, algLabel: `Max Flow: ${maxFlow}`, color: "#2ecc71" }]
+             nodes: [{ id: sinkId, algLabel: `Max Flow: ${maxFlow}`, color: "var(--alg-success)" }]
         }
     });
 

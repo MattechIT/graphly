@@ -44,7 +44,7 @@ export function createNode(x = 0, y = 0, forcedId = null, forcedLabel = null) {
     algLabel.setAttribute("y", y - NODE_RADIUS - 5);
     algLabel.setAttribute("class", "node-alg-label");
     algLabel.setAttribute("text-anchor", "middle");
-    algLabel.style.fill = "#e67e22";
+    algLabel.style.fill = "var(--alg-searching)";
     algLabel.style.fontSize = "12px";
     algLabel.style.fontWeight = "bold";
     algLabel.style.pointerEvents = "none";
@@ -238,7 +238,7 @@ export function updateEdgeVisuals(edge) {
     }
 
     if (edge.isSaturated) {
-        edge.el.style.stroke = "#e74c3c";
+        edge.el.style.stroke = "var(--state-danger)";
         edge.el.style.strokeWidth = "4px";
         edge.labelEl.textContent = "";
     } else {

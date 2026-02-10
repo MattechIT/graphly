@@ -36,7 +36,7 @@ export function run(nodes, edges, params) {
             nodes: nodes.map(n => ({
                 id: n.id,
                 algLabel: n.id === sourceId ? "dist: 0" : "dist: ∞",
-                color: n.id === sourceId ? "#f1c40f" : undefined
+                color: n.id === sourceId ? "var(--alg-highlight)" : undefined
             }))
         }
     });
@@ -66,7 +66,7 @@ export function run(nodes, edges, params) {
         steps.push({
             description: `Selected node ${getNodeLabel(nodes, u)} with current minimum distance ${minDist}.`,
             changes: {
-                nodes: [{ id: u, color: "#f1c40f" }]
+                nodes: [{ id: u, color: "var(--alg-highlight)" }]
             },
             highlight: [u]
         });
@@ -83,8 +83,8 @@ export function run(nodes, edges, params) {
             steps.push({
                 description: `Checking edge from ${getNodeLabel(nodes, u)} to ${getNodeLabel(nodes, v)} (weight: ${edge.weight}).`,
                 changes: {
-                    edges: [{ id: edge.id, color: "#e67e22" }],
-                    nodes: [{ id: v, color: "#e67e22" }] // Candidate
+                    edges: [{ id: edge.id, color: "var(--alg-searching)" }],
+                    nodes: [{ id: v, color: "var(--alg-searching)" }] // Candidate
                 }
             });
             
@@ -100,7 +100,7 @@ export function run(nodes, edges, params) {
                     description: `Found shorter path to ${getNodeLabel(nodes, v)}! Distance updated: ${oldDist} -> ${alt}.`,
                     changes: {
                         nodes: [{ id: v, algLabel: `dist: ${alt}` }],
-                        edges: [{ id: edge.id, color: "#2ecc71" }] // Relaxed edge
+                        edges: [{ id: edge.id, color: "var(--alg-success)" }] // Relaxed edge
                     }
                 });
             } else {
@@ -120,7 +120,7 @@ export function run(nodes, edges, params) {
         steps.push({
             description: `Finished processing node ${getNodeLabel(nodes, u)}.`,
             changes: {
-                nodes: [{ id: u, color: "#2ecc71" }], // Visited
+                nodes: [{ id: u, color: "var(--alg-success)" }], // Visited
                 edges: neighbors.map(e => ({ id: e.id, resetStyle: true })) // Reset outgoing edges style
             }
         });
@@ -138,7 +138,7 @@ export function run(nodes, edges, params) {
         if (prev[nodeId + "_edge"]) {
             finalChanges.edges.push({ 
                 id: prev[nodeId + "_edge"], 
-                color: "#3498db",
+                color: "var(--alg-path)",
                 width: 4 
             });
         }

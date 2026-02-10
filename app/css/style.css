@@ -13,16 +13,22 @@
     --ui-bg-sidebar: #ebedef;
     --ui-bg-card: #ffffff;
     --ui-bg-light: #ecf0f1;
+    --ui-bg-hover: #f8f9fa;
+    --ui-bg-track: #f1f1f1;
     --ui-border: #d1d4d7;
     --ui-border-light: #e0e4e8;
+    --ui-border-dark: #dcdde1;
+    --ui-dots: #e0e0e0;
     
     /* State Colors */
     --state-success: #27ae60;
     --state-success-light: #2ecc71;
     --state-danger: #e74c3c;
+    --state-danger-light: #fdf2f2;
     --state-warning: #f1c40f;
     --state-warning-dark: #f39c12;
     --state-accent: #e67e22;
+    --state-active-light: #e8f4fd;
     
     /* Text Colors */
     --text-main: #2c3e50;
@@ -34,6 +40,13 @@
     --shadow-soft: rgba(0,0,0,0.1);
     --shadow-medium: rgba(0,0,0,0.15);
     --shadow-hard: rgba(0,0,0,0.2);
+
+    /* Algorithmic State Aliases (Semantic) */
+    --alg-highlight: var(--state-warning);
+    --alg-searching: var(--state-accent);
+    --alg-success: var(--state-success-light);
+    --alg-path: var(--brand-primary);
+    --alg-error: var(--state-danger);
 }
 
 body {
@@ -54,7 +67,7 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-    background: #f1f1f1;
+    background: var(--ui-bg-track);
 }
 
 ::-webkit-scrollbar-thumb {
@@ -63,7 +76,7 @@ body {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: #95a5a6;
+    background: var(--text-muted);
 }
 
 #toolbar {
@@ -120,7 +133,7 @@ main {
     width: 0;
     background-color: var(--ui-bg-canvas);
     position: relative;
-    background-image: radial-gradient(#e0e0e0 1px, transparent 1px);
+    background-image: radial-gradient(var(--ui-dots) 1px, transparent 1px);
     background-size: 20px 20px;
     display: flex;
     flex-direction: column;
@@ -212,7 +225,7 @@ button.active {
 }
 
 .drag-edge {
-    stroke: #95a5a6;
+    stroke: var(--text-light);
     stroke-width: 2px;
     stroke-dasharray: 6, 4;
     pointer-events: none;
@@ -234,7 +247,7 @@ button.active {
     border-radius: 8px;
     padding: 8px 0;
     margin-top: 8px;
-    border: 1px solid #e0e0e0;
+    border: 1px solid var(--ui-dots);
     flex-direction: column;
 }
 
@@ -257,7 +270,7 @@ button.active {
     cursor: pointer;
 }
 
-.btn-dropdown-item:hover { background-color: #f8f9fa !important; color: var(--brand-primary) !important; }
+.btn-dropdown-item:hover { background-color: var(--ui-bg-hover) !important; color: var(--brand-primary) !important; }
 .dropdown-arrow { font-size: 18px !important; margin-left: 4px; transition: transform 0.2s; }
 
 /* UI PANELS (SIDEBAR & FLOATING) */
@@ -270,7 +283,7 @@ button.active {
     min-width: 150px;
     z-index: 100;
     display: none;
-    border: 1px solid #e0e0e0;
+    border: 1px solid var(--ui-dots);
 }
 
 #floating-panel.visible { display: block; }
@@ -299,7 +312,7 @@ button.active {
 
 #floating-panel input {
     padding: 6px;
-    border: 1px solid #dcdde1;
+    border: 1px solid var(--ui-border-dark);
     border-radius: 4px;
     font-size: 14px;
     outline: none;
@@ -317,7 +330,7 @@ button.active {
     font-weight: 600;
 }
 
-#floating-panel .panel-delete:hover { background-color: #fdf2f2; }
+#floating-panel .panel-delete:hover { background-color: var(--state-danger-light); }
 
 #btn-open-sidebar {
     position: absolute;
@@ -393,7 +406,7 @@ button.active {
 }
 
 #log-list li.current { 
-    background-color: #e8f4fd; 
+    background-color: var(--state-active-light); 
     border-left: 4px solid var(--brand-primary); 
     font-weight: 600; 
 }
