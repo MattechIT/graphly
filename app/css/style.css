@@ -197,11 +197,27 @@ button.active {
     pointer-events: none;
 }
 
+.node-alg-label {
+    font-size: 12px;
+    font-weight: bold;
+    fill: var(--alg-searching);
+    paint-order: stroke;
+    stroke: var(--ui-bg-canvas);
+    stroke-width: 3px;
+}
+
 /* Node Algorithmic States */
-.node.is-highlighted { fill: var(--alg-highlight); stroke: var(--state-warning-dark); }
-.node.is-searching { fill: var(--alg-searching); stroke: var(--state-warning-dark); }
-.node.is-success { fill: var(--alg-success); stroke: var(--state-success); }
-.node.is-path { fill: var(--alg-path); stroke: var(--brand-primary-dark); }
+.node[data-alg-state="highlighted"] { fill: var(--alg-highlight); stroke: var(--state-warning-dark); }
+.node[data-alg-state="highlighted"] + .node-label + .node-alg-label { fill: var(--alg-highlight); }
+
+.node[data-alg-state="searching"] { fill: var(--alg-searching); stroke: var(--state-warning-dark); }
+.node[data-alg-state="searching"] + .node-label + .node-alg-label { fill: var(--state-warning-dark); }
+
+.node[data-alg-state="success"] { fill: var(--alg-success); stroke: var(--state-success); }
+.node[data-alg-state="success"] + .node-label + .node-alg-label { fill: var(--state-success); }
+
+.node[data-alg-state="path"] { fill: var(--alg-path); stroke: var(--brand-primary-dark); }
+.node[data-alg-state="path"] + .node-label + .node-alg-label { fill: var(--brand-primary); }
 
 .edge {
     stroke: var(--ui-dark-light);
@@ -221,11 +237,11 @@ button.active {
 .edge:hover, .edge.hover { stroke: var(--brand-secondary); stroke-width: 4px; }
 
 /* Edge Algorithmic States */
-.edge.is-highlighted { stroke: var(--alg-highlight) !important; }
-.edge.is-searching { stroke: var(--alg-searching) !important; }
-.edge.is-success { stroke: var(--alg-success) !important; }
-.edge.is-path { stroke: var(--alg-path) !important; stroke-width: 4px; }
-.edge.is-error { stroke: var(--alg-error) !important; }
+.edge[data-alg-state="highlighted"] { stroke: var(--alg-highlight) !important; }
+.edge[data-alg-state="searching"] { stroke: var(--alg-searching) !important; }
+.edge[data-alg-state="success"] { stroke: var(--alg-success) !important; }
+.edge[data-alg-state="path"] { stroke: var(--alg-path) !important; stroke-width: 4px; }
+.edge[data-alg-state="error"] { stroke: var(--alg-error) !important; }
 
 .edge-label {
     font-size: 15px;

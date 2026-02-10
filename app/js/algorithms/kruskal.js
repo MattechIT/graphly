@@ -40,7 +40,7 @@ export function run(nodes, edges, params) {
     steps.push({
         description: "Algorithm started. Edges sorted by weight.",
         changes: {
-            nodes: nodes.map(n => ({ id: n.id, color: "var(--ui-bg-card)" }))
+            nodes: nodes.map(n => ({ id: n.id, resetStyle: true }))
         }
     });
 
@@ -53,7 +53,7 @@ export function run(nodes, edges, params) {
         // --- STEP: ANALYSIS ---
         // If the previous edge was discarded, reset it in this step
         const analysisChanges = {
-            edges: [{ id: edge.id, color: "var(--alg-highlight)" }] // Yellow: analyzing
+            edges: [{ id: edge.id, state: "highlighted" }] // Analyzing
         };
         if (lastDiscardedEdgeId) {
             analysisChanges.edges.push({ id: lastDiscardedEdgeId, resetStyle: true });
@@ -76,10 +76,10 @@ export function run(nodes, edges, params) {
             steps.push({
                 description: `Edge ${edgeLabel} connects two disjoint sets. Added to MST.`,
                 changes: {
-                    edges: [{ id: edge.id, color: "var(--alg-success)", width: 4 }],
+                    edges: [{ id: edge.id, state: "success", width: 4 }],
                     nodes: [
-                        { id: edge.source, color: "var(--alg-success)" }, 
-                        { id: edge.target, color: "var(--alg-success)" }
+                        { id: edge.source, state: "success" }, 
+                        { id: edge.target, state: "success" }
                     ]
                 }
             });
@@ -89,7 +89,7 @@ export function run(nodes, edges, params) {
             steps.push({
                 description: `Edge ${edgeLabel} forms a cycle. Discarded.`,
                 changes: {
-                    edges: [{ id: edge.id, color: "var(--alg-error)", width: 2 }]
+                    edges: [{ id: edge.id, state: "error", width: 2 }]
                 }
             });
         }
@@ -97,15 +97,15 @@ export function run(nodes, edges, params) {
 
     // Final reset for the last discarded edge (if any)
     const finalChanges = {
-        edges: mstEdges.map(e => ({ id: e.id, color: "var(--alg-path)", width: 4 })),
-        nodes: nodes.map(n => ({ id: n.id, color: "var(--alg-path)" }))
+        edges: mstEdges.map(e => ({ id: e.id, state: "path", width: 4 })),
+        nodes: nodes.map(n => ({ id: n.id, state: "path" }))
     };
     if (lastDiscardedEdgeId) {
         finalChanges.edges.push({ id: lastDiscardedEdgeId, resetStyle: true });
     }
 
     steps.push({
-        description: "MST Calculation Complete. Final tree highlighted in Blue.",
+        description: "MST Calculation Complete. Final tree highlighted.",
         changes: finalChanges
     });
 

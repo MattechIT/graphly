@@ -113,10 +113,6 @@ export function goToEnd() {
     if (state.currentStepIndex >= total - 1) return;
 
     // Execute everything quickly without delay
-    // Optimization: we could skip intermediate rendering, 
-    // but for simplicity and correctness (incremental dependencies), we re-run applyStep
-    
-    // Start from current position or beginning
     const startIndex = state.currentStepIndex + 1;
     
     for (let i = startIndex; i < total; i++) {
@@ -143,15 +139,6 @@ function runAutoPlay() {
 
 // Applies visual changes from a single Step object
 function applyStep(step) {
-    // expected step structure: 
-    // { 
-    //   description: "Log text", 
-    //   changes: { 
-    //      nodes: [ { id, color, algLabel, borderColor } ], 
-    //      edges: [ { id, color, flow, saturated } ] 
-    //   } 
-    // }
-
     if (!step.changes) return;
 
     // Node changes
@@ -164,14 +151,14 @@ function applyStep(step) {
                 node.algLabel = change.algLabel;
             }
             
-            // Color Management
-            if (change.color) node.el.style.fill = change.color;
-            if (change.borderColor) node.el.style.stroke = change.borderColor;
+            // State Management via Data Attributes
+            if (change.state) {
+                node.el.dataset.algState = change.state;
+            }
             
             // Style Reset
             if (change.resetStyle) {
-                node.el.style.fill = '';
-                node.el.style.stroke = '';
+                delete node.el.dataset.algState;
             }
 
             renderer.updateNodeVisuals(node);
@@ -187,19 +174,22 @@ function applyStep(step) {
             if (change.flow !== undefined) edge.flow = change.flow;
             if (change.saturated !== undefined) edge.isSaturated = change.saturated;
             
-            // Sync base visuals (labels, saturation color) first
-            renderer.updateEdgeVisuals(edge);
-
-            // Temporary Color (e.g., highlighted in yellow during scan)
-            if (change.color) {
-                edge.el.style.stroke = change.color;
+            // State Management via Data Attributes
+            if (change.state) {
+                edge.el.dataset.algState = change.state;
             }
+
+            // Style Reset
+            if (change.resetStyle) {
+                delete edge.el.dataset.algState;
+            }
+
+            // Sync base visuals (labels, markers)
+            renderer.updateEdgeVisuals(edge);
 
             // Temporary Width (e.g., bold for final path)
             if (change.width) {
                 edge.el.style.strokeWidth = change.width + "px";
-            } else if (!edge.isSaturated) {
-                 edge.el.style.strokeWidth = ''; 
             }
         });
     }
@@ -209,15 +199,15 @@ function applyStep(step) {
 function resetVisuals() {
     state.nodes.forEach(n => {
         n.algLabel = "";
-        n.el.style.fill = "";
-        n.el.style.stroke = "";
+        delete n.el.dataset.algState;
         renderer.updateNodeVisuals(n);
     });
 
     state.edges.forEach(e => {
         e.flow = 0;
         e.isSaturated = false;
-        e.el.style.stroke = "";
+        delete e.el.dataset.algState;
+        e.el.style.strokeWidth = "";
         renderer.updateEdgeVisuals(e);
     });
 }

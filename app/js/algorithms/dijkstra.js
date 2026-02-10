@@ -36,7 +36,7 @@ export function run(nodes, edges, params) {
             nodes: nodes.map(n => ({
                 id: n.id,
                 algLabel: n.id === sourceId ? "dist: 0" : "dist: ∞",
-                color: n.id === sourceId ? "var(--alg-highlight)" : undefined
+                state: n.id === sourceId ? "highlighted" : undefined
             }))
         }
     });
@@ -66,7 +66,7 @@ export function run(nodes, edges, params) {
         steps.push({
             description: `Selected node ${getNodeLabel(nodes, u)} with current minimum distance ${minDist}.`,
             changes: {
-                nodes: [{ id: u, color: "var(--alg-highlight)" }]
+                nodes: [{ id: u, state: "highlighted" }]
             },
             highlight: [u]
         });
@@ -83,8 +83,8 @@ export function run(nodes, edges, params) {
             steps.push({
                 description: `Checking edge from ${getNodeLabel(nodes, u)} to ${getNodeLabel(nodes, v)} (weight: ${edge.weight}).`,
                 changes: {
-                    edges: [{ id: edge.id, color: "var(--alg-searching)" }],
-                    nodes: [{ id: v, color: "var(--alg-searching)" }] // Candidate
+                    edges: [{ id: edge.id, state: "searching" }],
+                    nodes: [{ id: v, state: "searching" }] // Candidate
                 }
             });
             
@@ -100,7 +100,7 @@ export function run(nodes, edges, params) {
                     description: `Found shorter path to ${getNodeLabel(nodes, v)}! Distance updated: ${oldDist} -> ${alt}.`,
                     changes: {
                         nodes: [{ id: v, algLabel: `dist: ${alt}` }],
-                        edges: [{ id: edge.id, color: "var(--alg-success)" }] // Relaxed edge
+                        edges: [{ id: edge.id, state: "success" }] // Relaxed edge
                     }
                 });
             } else {
@@ -120,7 +120,7 @@ export function run(nodes, edges, params) {
         steps.push({
             description: `Finished processing node ${getNodeLabel(nodes, u)}.`,
             changes: {
-                nodes: [{ id: u, color: "var(--alg-success)" }], // Visited
+                nodes: [{ id: u, state: "success" }], // Visited
                 edges: neighbors.map(e => ({ id: e.id, resetStyle: true })) // Reset outgoing edges style
             }
         });
@@ -138,14 +138,13 @@ export function run(nodes, edges, params) {
         if (prev[nodeId + "_edge"]) {
             finalChanges.edges.push({ 
                 id: prev[nodeId + "_edge"], 
-                color: "var(--alg-path)",
-                width: 4 
+                state: "path" 
             });
         }
     }
     
     steps.push({
-        description: "Algorithm complete. The Shortest Path Tree is highlighted in blue.",
+        description: "Algorithm complete. The Shortest Path Tree is highlighted.",
         changes: finalChanges
     });
 

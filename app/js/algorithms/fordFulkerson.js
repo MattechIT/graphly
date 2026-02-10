@@ -29,8 +29,8 @@ export function run(nodes, edges, params) {
         description: `Starting Max Flow from ${getNodeLabel(sourceId)} to ${getNodeLabel(sinkId)}. Initial flow is 0.`,
         changes: {
             nodes: [
-                { id: sourceId, color: "var(--alg-highlight)", algLabel: `[-, ∞]` },
-                { id: sinkId, color: "var(--alg-path)", algLabel: `[?, ?]` }
+                { id: sourceId, state: "highlighted", algLabel: `[-, ∞]` },
+                { id: sinkId, state: "path", algLabel: `[?, ?]` }
             ],
             edges: edges.map(e => ({ id: e.id, flow: 0, saturated: false }))
         }
@@ -118,7 +118,7 @@ export function run(nodes, edges, params) {
                         nodes: neighborsToVisit.map(n => ({
                             id: n.id,
                             algLabel: `[${n.label.pred}, ${n.label.cap === Infinity ? '∞' : n.label.cap}]`,
-                            color: "var(--alg-searching)" // Visiting
+                            state: "searching" // Visiting
                         }))
                     }
                 });
@@ -137,7 +137,7 @@ export function run(nodes, edges, params) {
             const p = parent[curr];
             pathVisuals.push({ 
                 id: p.edge.id, 
-                color: "var(--alg-highlight)", // Highlight path
+                state: "highlighted", // Highlight path
                 width: 4 
             });
             pathNodes.unshift(getNodeLabel(curr));
@@ -170,7 +170,7 @@ export function run(nodes, edges, params) {
                 id: p.edge.id,
                 flow: p.edge.flow,
                 saturated: isSaturated,
-                color: "var(--alg-success)",
+                state: "success",
                 width: 4
             });
             
@@ -198,7 +198,7 @@ export function run(nodes, edges, params) {
     steps.push({
         description: `Algorithm complete. Maximum Flow: ${maxFlow}.`,
         changes: {
-             nodes: [{ id: sinkId, algLabel: `Max Flow: ${maxFlow}`, color: "var(--alg-success)" }]
+             nodes: [{ id: sinkId, algLabel: `Max Flow: ${maxFlow}`, state: "success" }]
         }
     });
 
