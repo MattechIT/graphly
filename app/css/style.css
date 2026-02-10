@@ -242,6 +242,7 @@ button.active {
 .edge[data-alg-state="success"] { stroke: var(--alg-success) !important; }
 .edge[data-alg-state="path"] { stroke: var(--alg-path) !important; stroke-width: 4px; }
 .edge[data-alg-state="error"] { stroke: var(--alg-error) !important; }
+.edge.is-saturated { stroke: var(--state-danger) !important; stroke-width: 4px; }
 
 .edge-label {
     font-size: 15px;
