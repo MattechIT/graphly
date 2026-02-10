@@ -39,6 +39,85 @@ export function exportGraph() {
 }
 
 /**
+ * Generates a text representation of the current graph (Edge List format).
+ */
+export function exportToText() {
+    const nodeLabels = state.nodes.map(n => n.userLabel).join(", ");
+    const edgeList = state.edges.map(e => {
+        const s = state.nodes.find(n => n.id === e.source)?.userLabel || e.source;
+        const t = state.nodes.find(n => n.id === e.target)?.userLabel || e.target;
+        return `${s} ${t} ${e.weight}`;
+    }).join("\n");
+
+    return { nodes: nodeLabels, edges: edgeList };
+}
+
+/**
+ * Main entry point for Quick Text Generation.
+ */
+export function generateGraphFromText(nodesStr, edgesStr) {
+    renderer.clearGraph();
+
+    // 1. Parse Nodes
+    const nodeNames = nodesStr.split(/[,\s\n]+/).filter(s => s.trim().length > 0);
+    const nameToId = new Map();
+
+    nodeNames.forEach(name => {
+        const node = renderer.createNode(0, 0, null, name.substring(0, 2));
+        interactions.attachNodeListeners(node);
+        nameToId.set(name, node.id);
+    });
+
+    // 2. Parse Edges
+    const edgeLines = edgesStr.split("\n").filter(l => l.trim().length > 0);
+    edgeLines.forEach(line => {
+        const data = parseEdgeLine(line);
+        if (data) {
+            const sourceId = findNodeIdByLabel(data.src, nameToId);
+            const targetId = findNodeIdByLabel(data.dst, nameToId);
+
+            if (sourceId && targetId) {
+                renderer.createEdge(sourceId, targetId, data.val);
+            }
+        }
+    });
+
+    // 3. Auto-Layout
+    import('./layout.js').then(layout => {
+        layout.applyCompactLayout();
+    });
+}
+
+/**
+ * Flexible Regex parser for edge lines (src dst val).
+ */
+function parseEdgeLine(line) {
+    const regex = /^([\w\d]+)[\s,;:>-]+([\w\d]+)[\s,;:=-]+([\d/.]+)/;
+    const match = line.trim().match(regex);
+    
+    if (match) {
+        return {
+            src: match[1],
+            dst: match[2],
+            val: match[3].includes('/') ? match[3] : parseFloat(match[3])
+        };
+    }
+    return null;
+}
+
+/**
+ * Helper to find node ID by label, or create it if missing.
+ */
+function findNodeIdByLabel(label, nameToIdMap) {
+    if (nameToIdMap.has(label)) return nameToIdMap.get(label);
+    
+    const node = renderer.createNode(0, 0, null, label.substring(0, 2));
+    interactions.attachNodeListeners(node);
+    nameToIdMap.set(label, node.id);
+    return node.id;
+}
+
+/**
  * Import graph from json file.
  * @param {File} file 
  */
