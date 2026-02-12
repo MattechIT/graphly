@@ -1,0 +1,59 @@
+[
+  {
+    "id": "tab-editor",
+    "label": "Editor",
+    "title": "Basic Interaction",
+    "type": "list",
+    "steps": [
+      "<strong>Add Node:</strong> Click the 'Add Node' button, then click anywhere on the canvas.",
+      "<strong>Add Edge:</strong> Click 'Add Edge', then drag from one node to another.",
+      "<strong>Move:</strong> In 'Move' mode (default), drag nodes to reposition them.",
+      "<strong>Edit/Delete:</strong> Click on a node or edge to open the property panel."
+    ],
+    "image": "res/gif/editor.gif"
+  },
+  {
+    "id": "tab-layout",
+    "label": "Layout",
+    "title": "Graph Organization",
+    "type": "list",
+    "steps": [
+      "<strong>Compact:</strong> Arranges nodes to minimize empty space.",
+      "<strong>Layered:</strong> Useful for hierarchical or directed graphs.",
+      "<strong>Circle:</strong> Places all nodes in a perfectly circular formation.",
+      "<strong>Grid:</strong> Snaps nodes to a structured grid layout."
+    ]
+  },
+  {
+    "id": "tab-algos",
+    "label": "Algorithm",
+    "title": "Running Algorithms",
+    "type": "numbered",
+    "steps": [
+      "Select an algorithm from the <strong>Algorithms</strong> menu.",
+      "Follow the instructions in the bottom popup (e.g., 'Select a SOURCE node').",
+      "Use the <strong>Player Bar</strong> at the bottom to step through the execution.",
+      "Click the <strong>Stop</strong> button to return to editor mode."
+    ]
+  },
+  {
+    "id": "tab-load",
+    "label": "Load",
+    "title": "Importing Graphs",
+    "type": "list",
+    "steps": [
+      "<strong>From JSON:</strong> Upload a previously saved <code>.json</code> file.",
+      "<strong>From Text:</strong> Paste an edge list (e.g., <code>A B 10</code>) for quick import."
+    ]
+  },
+  {
+    "id": "tab-save",
+    "label": "Save",
+    "title": "Exporting Data",
+    "type": "list",
+    "steps": [
+      "<strong>As JSON:</strong> Downloads a file with all nodes, positions, and edges.",
+      "<strong>As Text:</strong> Opens a modal with the graph data ready to be copied."
+    ]
+  }
+]

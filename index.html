@@ -235,38 +235,11 @@
                 <h3><span class="material-symbols-outlined">help</span> Graphly Guide</h3>
                 <button class="btn-close-modal" data-close="guide-overlay">&times;</button>
             </div>
-            <div class="modal-tabs">
-                <button class="tab-link active" data-tab="tab-editor">Editor</button>
-                <button class="tab-link" data-tab="tab-algos">Algorithms</button>
-                <button class="tab-link" data-tab="tab-data">Import/Export</button>
+            <div id="guide-tabs" class="modal-tabs">
+                <!-- Tabs injected dynamically -->
             </div>
-            <div class="modal-body">
-                <div id="tab-editor" class="tab-content active">
-                    <h4>Basic Interaction</h4>
-                    <ul>
-                        <li><strong>Add Node:</strong> Click the "Add Node" button, then click anywhere on the canvas.</li>
-                        <li><strong>Add Edge:</strong> Click "Add Edge", then drag from one node to another.</li>
-                        <li><strong>Move:</strong> In "Move" mode (default), drag nodes to reposition them.</li>
-                        <li><strong>Edit/Delete:</strong> Click on a node or edge to open the property panel.</li>
-                    </ul>
-                </div>
-                <div id="tab-algos" class="tab-content">
-                    <h4>Running Algorithms</h4>
-                    <ol>
-                        <li>Select an algorithm from the <strong>Algorithms</strong> menu.</li>
-                        <li>Follow the instructions in the bottom popup (e.g., "Select a SOURCE node").</li>
-                        <li>Use the <strong>Player Bar</strong> at the bottom to step through the execution.</li>
-                        <li>Click the <strong>Stop</strong> button to return to editor mode.</li>
-                    </ol>
-                </div>
-                <div id="tab-data" class="tab-content">
-                    <h4>Saving & Loading</h4>
-                    <ul>
-                        <li><strong>JSON:</strong> Recommended for saving the full state including positions.</li>
-                        <li><strong>Text:</strong> Use the "Edge List" format (e.g., <code>A B 10</code>) for quick manual input.</li>
-                        <li><strong>Copy:</strong> You can copy the graph data to your clipboard to share it easily.</li>
-                    </ul>
-                </div>
+            <div id="guide-body" class="modal-body">
+                <!-- Content injected dynamically -->
             </div>
         </div>
     </div>

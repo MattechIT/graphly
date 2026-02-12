@@ -384,21 +384,71 @@ export function initDropdowns() {
 }
 
 // --- GUIDE MODAL LOGIC ---
-btnOpenGuide?.addEventListener('click', () => {
+let guideData = null;
+async function loadGuide() {
+    if (guideData) return;
+    try {
+        const response = await fetch('res/guide.json');
+        guideData = await response.json();
+        renderGuide();
+    } catch (error) {
+        console.error("Failed to load guide data:", error);
+    }
+}
+
+function renderGuide() {
+    const tabsContainer = document.getElementById('guide-tabs');
+    const bodyContainer = document.getElementById('guide-body');
+    if (!tabsContainer || !bodyContainer || !guideData) return;
+
+    tabsContainer.innerHTML = '';
+    bodyContainer.innerHTML = '';
+
+    guideData.forEach((section, index) => {
+        // Create Tab
+        const tabBtn = document.createElement('button');
+        tabBtn.className = `tab-link ${index === 0 ? 'active' : ''}`;
+        tabBtn.textContent = section.label;
+        tabBtn.onclick = () => switchTab(section.id);
+        tabBtn.setAttribute('data-tab-id', section.id);
+        tabsContainer.appendChild(tabBtn);
+
+        // Create Content
+        const contentDiv = document.createElement('div');
+        contentDiv.id = section.id;
+        contentDiv.className = `tab-content ${index === 0 ? 'active' : ''}`;
+        
+        let html = `<h4>${section.title}</h4>`;
+        const listTag = section.type === 'numbered' ? 'ol' : 'ul';
+        
+        html += `<${listTag}>`;
+        section.steps.forEach(step => {
+            html += `<li>${step}</li>`;
+        });
+        html += `</${listTag}>`;
+
+        if (section.image) {
+            html += `<img src="${section.image}" alt="${section.label}" class="guide-image">`;
+        }
+
+        contentDiv.innerHTML = html;
+        bodyContainer.appendChild(contentDiv);
+    });
+}
+
+function switchTab(tabId) {
+    document.querySelectorAll('.tab-link').forEach(l => {
+        l.classList.toggle('active', l.getAttribute('data-tab-id') === tabId);
+    });
+    document.querySelectorAll('.tab-content').forEach(c => {
+        c.classList.toggle('active', c.id === tabId);
+    });
+}
+
+btnOpenGuide?.addEventListener('click', async () => {
+    await loadGuide();
     guideOverlay.classList.remove('hidden');
     toggleModalState(true);
-});
-
-// Tab switching logic for the Guide modal
-document.querySelectorAll('.tab-link').forEach(link => {
-    link.addEventListener('click', () => {
-        const targetTab = link.getAttribute('data-tab');
-        document.querySelectorAll('.tab-link').forEach(l => l.classList.remove('active'));
-        link.classList.add('active');
-        
-        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-        document.getElementById(targetTab)?.classList.add('active');
-    });
 });
 
 // Close modal logic (delegated)
