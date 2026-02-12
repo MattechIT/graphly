@@ -243,6 +243,11 @@ export function setAlgorithmMode(active) {
         
         toggleSidebarButton(false);
         
+        document.querySelectorAll('.node').forEach(n => {
+            n.removeAttribute('data-selected');
+            n.removeAttribute('data-alg-state');
+        });
+
         document.getElementById('log-list').innerHTML = '';
         import('./renderer.js').then(r => {
              r.refreshAllEdgesVisuals();
@@ -286,12 +291,17 @@ export function handleSelection(nodeId) {
     const existingValues = Object.values(state.algorithmParams);
     if (existingValues.includes(nodeId)) {
         showToast("Please select a different node!", 2000);
-        // Restore the instruction after the error message expires
         setTimeout(() => updateUI(), 2000);
         return;
     }
 
     state.algorithmParams[currentParam] = nodeId;
+    
+    // Visually highlight the selected node
+    const nodeEl = document.getElementById(nodeId);
+    if (nodeEl) {
+        nodeEl.setAttribute('data-selected', 'true');
+    }
     
     // Check if more steps are needed
     if (state.selectionStep + 1 < requiredParams.length) {

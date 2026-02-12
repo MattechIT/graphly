@@ -223,6 +223,12 @@ button.active {
     will-change: transform;
 }
 
+.node[data-selected="true"] {
+    stroke: var(--state-warning);
+    stroke-width: 6px;
+    filter: drop-shadow(0 0 8px var(--state-warning));
+}
+
 .node:hover, .node.target-hover {
     stroke: var(--state-warning);
     stroke-width: 4px;
