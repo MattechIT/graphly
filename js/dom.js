@@ -7,9 +7,11 @@ export const dragLayer = document.getElementById('drag-layer');
 // --- TOOLBAR & UI ---
 export const btnAddNode = document.getElementById('btn-add-node');
 export const btnAddEdge = document.getElementById('btn-add-edge');
+export const btnOpenGuide = document.getElementById('btn-open-guide');
 export const algorithmContainer = document.getElementById('algorithm-container');
 export const floatingPanel = document.getElementById('floating-panel');
 export const toastContainer = document.getElementById('toast-container');
+export const guideOverlay = document.getElementById('guide-overlay');
 
 // --- PERSISTENCE CONTROLS ---
 export const btnSaveJson = document.getElementById('btn-save-json');

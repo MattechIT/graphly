@@ -1,5 +1,5 @@
 import { state } from './state.js';
-import { floatingPanel, btnAddNode, btnAddEdge, svgCanvas, toastContainer } from './dom.js';
+import { floatingPanel, btnAddNode, btnAddEdge, svgCanvas, toastContainer, guideOverlay, btnOpenGuide } from './dom.js';
 import { centerGraph } from './layout.js';
 import { LABEL_MAX_LENGTH } from './config.js';
 
@@ -382,3 +382,30 @@ export function initDropdowns() {
         document.querySelectorAll('.dropdown-content').forEach(c => c.classList.remove('show'));
     });
 }
+
+// --- GUIDE MODAL LOGIC ---
+btnOpenGuide?.addEventListener('click', () => {
+    guideOverlay.classList.remove('hidden');
+    toggleModalState(true);
+});
+
+// Tab switching logic for the Guide modal
+document.querySelectorAll('.tab-link').forEach(link => {
+    link.addEventListener('click', () => {
+        const targetTab = link.getAttribute('data-tab');
+        document.querySelectorAll('.tab-link').forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+        
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        document.getElementById(targetTab)?.classList.add('active');
+    });
+});
+
+// Close modal logic (delegated)
+document.querySelectorAll('.btn-close-modal').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const modalId = btn.getAttribute('data-close');
+        document.getElementById(modalId)?.classList.add('hidden');
+        toggleModalState(false);
+    });
+});
