@@ -282,6 +282,15 @@ export function handleSelection(nodeId) {
     const requiredParams = state.selectedAlgorithm.requires;
     const currentParam = requiredParams[state.selectionStep];
     
+    // Prevent selecting the same node for different required parameters (e.g., Source and Sink)
+    const existingValues = Object.values(state.algorithmParams);
+    if (existingValues.includes(nodeId)) {
+        showToast("Please select a different node!", 2000);
+        // Restore the instruction after the error message expires
+        setTimeout(() => updateUI(), 2000);
+        return;
+    }
+
     state.algorithmParams[currentParam] = nodeId;
     
     // Check if more steps are needed
