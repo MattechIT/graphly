@@ -1,7 +1,49 @@
 import { state } from './state.js';
-import { floatingPanel, infoText, btnAddNode, btnAddEdge, svgCanvas } from './dom.js';
+import { floatingPanel, btnAddNode, btnAddEdge, svgCanvas, toastContainer } from './dom.js';
 import { centerGraph } from './layout.js';
 import { LABEL_MAX_LENGTH } from './config.js';
+
+let currentToast = null;
+
+/**
+ * Shows a toast message at the bottom of the screen.
+ * @param {string|null} message The message to show, or null to hide current toast.
+ * @param {number} duration Duration in ms. If 0, toast is persistent.
+ */
+export function showToast(message, duration = 3000) {
+    if (!message) {
+        if (currentToast) {
+            const toastToHide = currentToast;
+            toastToHide.classList.add('toast-out');
+            setTimeout(() => toastToHide.remove(), 300);
+            currentToast = null;
+        }
+        return;
+    }
+
+    if (currentToast && currentToast.innerText === message) return;
+
+    if (currentToast) {
+        currentToast.remove();
+    }
+
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.innerText = message;
+    
+    toastContainer.appendChild(toast);
+    currentToast = toast;
+
+    if (duration > 0) {
+        setTimeout(() => {
+            if (currentToast === toast) {
+                toast.classList.add('toast-out');
+                setTimeout(() => toast.remove(), 300);
+                if (currentToast === toast) currentToast = null;
+            }
+        }, duration);
+    }
+}
 
 // Shows the floating panel near the provided client coordinates
 export function showFloatingPanel(clientX, clientY, type, id) {
@@ -120,13 +162,19 @@ export function updateUI() {
     btnAddEdge.classList.toggle('active', state.currentMode === 'addEdge');
 
     if (state.currentMode === 'addNode') {
-        infoText.innerText = "Click to add a new node.";
+        showToast("Click to add a new node.", 0);
         svgCanvas.style.cursor = "crosshair";
     } else if (state.currentMode === 'addEdge') {
-        infoText.innerText = "Drag from one node to another to connect them.";
+        showToast("Drag from one node to another to connect them.", 0);
+        svgCanvas.style.cursor = "pointer";
+    } else if (state.currentMode === 'selectSource') {
+        showToast(`Select a SOURCE node for ${state.selectedAlgorithm.name}`, 0);
+        svgCanvas.style.cursor = "pointer";
+    } else if (state.currentMode === 'selectSink') {
+        showToast(`Select a SINK node for ${state.selectedAlgorithm.name}`, 0);
         svgCanvas.style.cursor = "pointer";
     } else {
-        infoText.innerText = "Drag nodes to move them.";
+        showToast(null);
         svgCanvas.style.cursor = "default";
     }
 }
@@ -222,16 +270,12 @@ function startSelectionStep(stepIndex) {
     const paramName = state.selectedAlgorithm.requires[stepIndex];
     state.selectionStep = stepIndex;
     
-    // Map param name to UI mode and message
+    // Map param name to UI mode
     if (paramName === 'sourceNode') {
         setMode('selectSource');
-        infoText.innerText = `Select a SOURCE node for ${state.selectedAlgorithm.name}`;
     } else if (paramName === 'sinkNode') {
         setMode('selectSink');
-        infoText.innerText = `Select a SINK node for ${state.selectedAlgorithm.name}`;
     }
-    
-    svgCanvas.style.cursor = "pointer";
 }
 
 export function handleSelection(nodeId) {

@@ -8,8 +8,8 @@ export const dragLayer = document.getElementById('drag-layer');
 export const btnAddNode = document.getElementById('btn-add-node');
 export const btnAddEdge = document.getElementById('btn-add-edge');
 export const algorithmContainer = document.getElementById('algorithm-container');
-export const infoText = document.getElementById('info');
 export const floatingPanel = document.getElementById('floating-panel');
+export const toastContainer = document.getElementById('toast-container');
 
 // --- PERSISTENCE CONTROLS ---
 export const btnSaveJson = document.getElementById('btn-save-json');
