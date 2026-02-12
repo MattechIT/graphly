@@ -441,7 +441,17 @@ function switchTab(tabId) {
         l.classList.toggle('active', l.getAttribute('data-tab-id') === tabId);
     });
     document.querySelectorAll('.tab-content').forEach(c => {
-        c.classList.toggle('active', c.id === tabId);
+        const isActive = c.id === tabId;
+        c.classList.toggle('active', isActive);
+        
+        // Restart any GIFs/images
+        if (isActive) {
+            const images = c.querySelectorAll('img');
+            images.forEach(img => {
+                const src = img.src.split('?')[0];
+                img.src = src + '?t=' + Date.now(); // Append timestamp to force reload
+            });
+        }
     });
 }
 

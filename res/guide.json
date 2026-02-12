@@ -18,11 +18,12 @@
     "title": "Graph Organization",
     "type": "list",
     "steps": [
-      "<strong>Compact:</strong> Arranges nodes to minimize empty space.",
+      "<strong>Compact:</strong> Arranges nodes to minimize empty space in diamond style.",
       "<strong>Layered:</strong> Useful for hierarchical or directed graphs.",
       "<strong>Circle:</strong> Places all nodes in a perfectly circular formation.",
       "<strong>Grid:</strong> Snaps nodes to a structured grid layout."
-    ]
+    ],
+    "image": "res/gif/layout.gif"
   },
   {
     "id": "tab-algos",
@@ -34,17 +35,8 @@
       "Follow the instructions in the bottom popup (e.g., 'Select a SOURCE node').",
       "Use the <strong>Player Bar</strong> at the bottom to step through the execution.",
       "Click the <strong>Stop</strong> button to return to editor mode."
-    ]
-  },
-  {
-    "id": "tab-load",
-    "label": "Load",
-    "title": "Importing Graphs",
-    "type": "list",
-    "steps": [
-      "<strong>From JSON:</strong> Upload a previously saved <code>.json</code> file.",
-      "<strong>From Text:</strong> Paste an edge list (e.g., <code>A B 10</code>) for quick import."
-    ]
+    ],
+    "image": "res/gif/algorithm.gif"
   },
   {
     "id": "tab-save",
@@ -52,8 +44,20 @@
     "title": "Exporting Data",
     "type": "list",
     "steps": [
-      "<strong>As JSON:</strong> Downloads a file with all nodes, positions, and edges.",
-      "<strong>As Text:</strong> Opens a modal with the graph data ready to be copied."
-    ]
+      "<strong>As Text:</strong> Opens a modal with the graph data ready to be copied.",
+      "<strong>As JSON:</strong> Downloads a file with all nodes, positions, and edges."
+    ],
+    "image": "res/gif/load.gif"
+  },
+  {
+    "id": "tab-load",
+    "label": "Load",
+    "title": "Importing Graphs",
+    "type": "list",
+    "steps": [
+      "<strong>From Text:</strong> Paste a node and/or an edge list (e.g., <code>A B 10</code>) for quick import.",
+      "<strong>From JSON:</strong> Upload a previously saved <code>.json</code> file."
+    ],
+    "image": "res/gif/save.gif"
   }
 ]
