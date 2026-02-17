@@ -92,6 +92,7 @@ export function init() {
                 if (state.edgeClickSource) {
                     document.getElementById(state.edgeClickSource)?.classList.remove('selected-source');
                     state.edgeClickSource = null;
+                    ui.updateUI();
                 }
             } 
             // 2. Click Case: Released on the SAME node
@@ -101,12 +102,12 @@ export function init() {
                 if (!state.edgeClickSource) {
                     state.edgeClickSource = nodeId;
                     targetNodeDOM.classList.add('selected-source');
-                    ui.showToast("Source selected. Click destination node.");
+                    ui.showToast("Source selected. Click destination node.", 0);
                 } else if (state.edgeClickSource !== nodeId) {
                     renderer.createEdge(state.edgeClickSource, nodeId);
                     document.getElementById(state.edgeClickSource)?.classList.remove('selected-source');
                     state.edgeClickSource = null;
-                    ui.showToast("Edge created.");
+                    ui.updateUI();
                 } else {
                     targetNodeDOM.classList.remove('selected-source');
                     state.edgeClickSource = null;

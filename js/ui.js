@@ -172,7 +172,7 @@ export function updateUI() {
         showToast("Click to add a new node.", 0);
         svgCanvas.style.cursor = "crosshair";
     } else if (state.currentMode === 'addEdge') {
-        showToast("Drag from one node to another to connect them.", 0);
+        showToast("Drag from one node to another OR click two nodes to connect them.", 0);
         svgCanvas.style.cursor = "pointer";
     } else if (state.currentMode === 'selectSource') {
         showToast(`Select a SOURCE node for ${state.selectedAlgorithm.name}`, 0);
