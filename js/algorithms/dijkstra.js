@@ -67,8 +67,7 @@ export function run(nodes, edges, params) {
             description: `Selected node ${getNodeLabel(nodes, u)} with current minimum distance ${minDist}.`,
             changes: {
                 nodes: [{ id: u, state: "highlighted" }]
-            },
-            highlight: [u]
+            }
         });
         
         // Get neighbors of u
