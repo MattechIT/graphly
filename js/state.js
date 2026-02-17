@@ -19,6 +19,7 @@ export const state = {
     edgeStartNodeDOM: null,
     tempEdgeLine: null,
     hoveredTargetNodeDOM: null,
+    edgeClickSource: null,
 
     // Floating panel
     selectedElement: null,

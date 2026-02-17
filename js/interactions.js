@@ -20,9 +20,32 @@ export function init() {
     const handleMove = (e) => {
         const pos = getMousePosition(e);
 
-        if (state.isDraggingEdge && state.tempEdgeLine) {
-            state.tempEdgeLine.setAttribute('x2', pos.x);
-            state.tempEdgeLine.setAttribute('y2', pos.y);
+        if (state.isDraggingEdge) {
+            if (state.tempEdgeLine) {
+                state.tempEdgeLine.setAttribute('x2', pos.x);
+                state.tempEdgeLine.setAttribute('y2', pos.y);
+            } else {
+                // Check threshold before creating the line
+                const startNode = state.nodes.find(n => n.el === state.edgeStartNodeDOM);
+                if (startNode) {
+                    const dist = Math.sqrt(Math.pow(pos.x - startNode.x, 2) + Math.pow(pos.y - startNode.y, 2));
+                    if (dist > 10) {
+                        const ns = 'http://www.w3.org/2000/svg';
+                        const line = document.createElementNS(ns, 'line');
+                        line.setAttribute('x1', startNode.x);
+                        line.setAttribute('y1', startNode.y);
+                        line.setAttribute('x2', pos.x);
+                        line.setAttribute('y2', pos.y);
+                        line.setAttribute('class', 'drag-edge');
+                        line.setAttribute('stroke', 'var(--text-light)');
+                        line.setAttribute('stroke-width', '2');
+                        line.setAttribute('stroke-dasharray', '6,4');
+                        line.setAttribute('marker-end', 'url(#arrowhead-drag)');
+                        dragLayer.appendChild(line);
+                        state.tempEdgeLine = line;
+                    }
+                }
+            }
 
             // Manual targeting for touch:
             const target = document.elementFromPoint(e.clientX, e.clientY);
@@ -60,9 +83,37 @@ export function init() {
     // Global up handler
     const handleEnd = (e) => {
         if (state.isDraggingEdge) {
-            if (state.hoveredTargetNodeDOM && state.hoveredTargetNodeDOM !== state.edgeStartNodeDOM) {
-                renderer.createEdge(state.edgeStartNodeDOM.id, state.hoveredTargetNodeDOM.id);
+            const releaseTarget = document.elementFromPoint(e.clientX, e.clientY);
+            const targetNodeDOM = releaseTarget?.classList.contains('node') ? releaseTarget : null;
+
+            // 1. Drag & Drop Case: Released on a DIFFERENT node
+            if (targetNodeDOM && targetNodeDOM !== state.edgeStartNodeDOM) {
+                renderer.createEdge(state.edgeStartNodeDOM.id, targetNodeDOM.id);
+                if (state.edgeClickSource) {
+                    document.getElementById(state.edgeClickSource)?.classList.remove('selected-source');
+                    state.edgeClickSource = null;
+                }
+            } 
+            // 2. Click Case: Released on the SAME node
+            else if (targetNodeDOM === state.edgeStartNodeDOM) {
+                const nodeId = targetNodeDOM.id;
+                
+                if (!state.edgeClickSource) {
+                    state.edgeClickSource = nodeId;
+                    targetNodeDOM.classList.add('selected-source');
+                    ui.showToast("Source selected. Click destination node.");
+                } else if (state.edgeClickSource !== nodeId) {
+                    renderer.createEdge(state.edgeClickSource, nodeId);
+                    document.getElementById(state.edgeClickSource)?.classList.remove('selected-source');
+                    state.edgeClickSource = null;
+                    ui.showToast("Edge created.");
+                } else {
+                    targetNodeDOM.classList.remove('selected-source');
+                    state.edgeClickSource = null;
+                    ui.updateUI();
+                }
             }
+
             if (state.tempEdgeLine) state.tempEdgeLine.remove();
             if (state.hoveredTargetNodeDOM) state.hoveredTargetNodeDOM.classList.remove('target-hover');
 
@@ -109,23 +160,6 @@ export function handleNodePointerDown(e, nodeId) {
     if (state.currentMode === 'addEdge') {
         state.isDraggingEdge = true;
         state.edgeStartNodeDOM = nodeDOM;
-
-        // Temporary helper line
-        const ns = 'http://www.w3.org/2000/svg';
-        const line = document.createElementNS(ns, 'line');
-        line.setAttribute('x1', nodeData.x);
-        line.setAttribute('y1', nodeData.y);
-        line.setAttribute('x2', nodeData.x);
-        line.setAttribute('y2', nodeData.y);
-        // Explicit classes and attributes to ensure visibility during drag
-        line.setAttribute('class', 'drag-edge');
-        line.setAttribute('stroke', 'var(--text-light)');
-        line.setAttribute('stroke-width', '2');
-        line.setAttribute('stroke-dasharray', '6,4');
-        line.setAttribute('marker-end', 'url(#arrowhead-drag)');
-        dragLayer.appendChild(line);
-        state.tempEdgeLine = line;
-
         ui.hideFloatingPanel();
     } else if (state.currentMode === null && !state.isAlgorithmRunning) {
         state.draggedNodeData = nodeData;

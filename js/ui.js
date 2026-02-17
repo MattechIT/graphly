@@ -153,6 +153,13 @@ export function panelOptionClick(action) {
 export function setMode(mode) {
     if (state.currentMode === mode) state.currentMode = null;
     else state.currentMode = mode;
+
+    // Reset temporary selection when switching modes
+    if (state.edgeClickSource) {
+        document.getElementById(state.edgeClickSource)?.classList.remove('selected-source');
+        state.edgeClickSource = null;
+    }
+
     updateUI();
 }
 
