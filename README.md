@@ -45,5 +45,5 @@ Graphly transforms abstract graph theory into a visual experience. It allows use
 2.  **Launch:** Open `http://localhost:8000` (or the port provided by your server) in your browser.
 3.  **Edit Graph:** Add nodes and edges using the toolbar and interact with them by moving it or by clicking on elements to edit parameters.
 4.  **Organize:** Use the **Layout** menu to automatically arrange nodes into common structured patterns.
-5.  **Algorithms:** Select and run algoithms from the toolbar in order to visualize the execution step-by-step.
+5.  **Algorithms:** Select and run algoithms from the **Algorithm** menu in order to visualize the execution step-by-step.
 6.  **Persistence:** Use the **File** menu to save your graph as JSON or import existing datasets from formatted text.
