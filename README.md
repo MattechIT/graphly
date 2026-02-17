@@ -47,3 +47,5 @@ Graphly transforms abstract graph theory into a visual experience. It allows use
 4.  **Organize:** Use the **Layout** menu to automatically arrange nodes into common structured patterns.
 5.  **Algorithms:** Select and run algoithms from the **Algorithm** menu in order to visualize the execution step-by-step.
 6.  **Persistence:** Use the **File** menu to save your graph as JSON or import existing datasets from formatted text.
+
+For any other questions, please refer to the **User Guide** incorporated directly in the website or the [Documentation](docs/).
