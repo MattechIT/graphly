@@ -3,7 +3,7 @@
 ## 🛠️ Interactive Sandbox
 The core of Graphly is its intuitive editor, allowing for direct manipulation of the graph structure.
 - **Node Creation:** Add nodes with a single click in Add Node mode.
-- **Smart Edges:** Connect nodes by dragging from one node to another.
+- **Smart Edges:** Connect nodes by dragging from one node to another OR by clicking source and target nodes in sequence.
 - **Direct Editing:** Click any node or edge to open a **Floating Property Panel**, where you can rename nodes or set edge weights/capacities.
 - **Live Dragging:** Move nodes freely: connected edges will follow dynamically using optimized geometric recalculations.
 
