@@ -8,7 +8,7 @@ import { LABEL_MAX_LENGTH } from './config.js';
  */
 export function exportGraph() {
     const graphData = {
-        graphlyVersion: "1.1",
+        graphlyVersion: "1.0",
         timestamp: new Date().toISOString(),
         nodes: state.nodes.map(n => ({
             id: n.id,
@@ -191,7 +191,7 @@ function validateGraphData(data) {
 /**
  * Build graph from serialized data
  */
-function loadGraphData(data) {
+export function loadGraphData(data) {
     renderer.clearGraph();
 
     let missingCoords = false;

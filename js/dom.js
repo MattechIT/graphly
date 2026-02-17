@@ -47,6 +47,7 @@ export const textareaEdges = document.getElementById('text-edges');
 export const textareaExportAll = document.getElementById('text-export-all');
 export const importStatus = document.getElementById('import-status');
 export const btnQuickGenerate = document.getElementById('btn-quick-generate');
+export const btnLoadTestGraph = document.getElementById('btn-load-test-graph');
 export const btnCopyExport = document.getElementById('btn-copy-export');
 
 /**

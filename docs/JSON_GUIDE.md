@@ -52,7 +52,7 @@ Edges define the connections between nodes.
 
 ### Optional Fields
 - `id`: (String) A unique identifier for the edge.
-- `weight`: (Number) The value of the edge (used by Dijkstra, Kruskal, etc.). Defaults to `1`.
+- `weight`: (Number) The value of the edge (used by Dijkstra, Kruskal, Ford-Fulkerson, etc.). Defaults to `1`.
 
 ### Example
 ```json
@@ -95,3 +95,4 @@ The system is optimized for IDs following the `node-N` (for nodes) and `edge-nod
 - **Omit Coordinates for Auto-Layout:** You don't need to guess `x` and `y`. Just define the IDs and connections, load the file, and you will get a clean layout automatically.
 - **Weights for Algorithms:** If you are preparing a graph for Dijkstra, ensure every edge has a `weight`.
 - **Directionality:** All edges in the JSON are considered directed. If you need an undirected graph, create two edges (e.g., A -> B and B -> A).
+- **Try** the `test-graph.json` file included in the repository to see a working example of a graph JSON file.

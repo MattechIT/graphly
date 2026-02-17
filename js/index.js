@@ -10,7 +10,8 @@ import {
     btnSaveJson, btnSaveText, btnLoadJson, btnLoadText, inputLoadFile,
     btnLayoutLayered, btnLayoutCompact, btnLayoutCircle, btnLayoutGrid,
     algorithmContainer, importOverlay, exportOverlay, btnQuickGenerate,
-    textareaNodes, textareaEdges, importStatus, textareaExportAll, btnCopyExport
+    textareaNodes, textareaEdges, importStatus, textareaExportAll, btnCopyExport,
+    btnLoadTestGraph
 } from './dom.js';
 import { getAlgorithmList } from './algorithms/registry.js';
 import { centerGraph, throttle } from './layout.js';
@@ -85,6 +86,18 @@ textareaEdges.addEventListener('input', updateImportStatus);
 btnQuickGenerate.addEventListener('click', () => {
     persistence.generateGraphFromText(textareaNodes.value, textareaEdges.value);
     importOverlay.classList.add('hidden');
+});
+
+// Load Test Graph from res/test-graph.json
+btnLoadTestGraph.addEventListener('click', async () => {
+    try {
+        const response = await fetch('res/test-graph.json');
+        const data = await response.json();
+        persistence.loadGraphData(data);
+        importOverlay.classList.add('hidden');
+    } catch (err) {
+        console.error("Failed to load test graph:", err);
+    }
 });
 
 // Clipboard functionality

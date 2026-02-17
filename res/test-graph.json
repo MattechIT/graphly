@@ -1,0 +1,37 @@
+{
+  "graphlyVersion": "1.0",
+  "timestamp": "2026-02-07T12:00:00Z",
+  "nodes": [
+    {"id": "n1", "userLabel": "1"},
+    {"id": "n2", "userLabel": "2"},
+    {"id": "n3", "userLabel": "3"},
+    {"id": "n4", "userLabel": "4"},
+    {"id": "n5", "userLabel": "5"},
+    {"id": "n6", "userLabel": "6"},
+    {"id": "n7", "userLabel": "7"},
+    {"id": "n8", "userLabel": "8"},
+    {"id": "n9", "userLabel": "9"},
+    {"id": "n10", "userLabel": "10"}
+  ],
+  "edges": [
+    {"id": "e1-2", "source": "n1", "target": "n2", "weight": 6},
+    {"id": "e1-3", "source": "n1", "target": "n3", "weight": 6},
+    {"id": "e3-2", "source": "n3", "target": "n2", "weight": 5},
+    {"id": "e2-5", "source": "n2", "target": "n5", "weight": 9},
+    {"id": "e2-4", "source": "n2", "target": "n4", "weight": 1},
+    {"id": "e3-4", "source": "n3", "target": "n4", "weight": 2},
+    {"id": "e3-6", "source": "n3", "target": "n6", "weight": 2},
+    {"id": "e4-6", "source": "n4", "target": "n6", "weight": 4},
+    {"id": "e5-4", "source": "n5", "target": "n4", "weight": 2},
+    {"id": "e5-6", "source": "n5", "target": "n6", "weight": 2},
+    {"id": "e5-8", "source": "n5", "target": "n8", "weight": 2},
+    {"id": "e5-7", "source": "n5", "target": "n7", "weight": 2},
+    {"id": "e7-6", "source": "n7", "target": "n6", "weight": 3},
+    {"id": "e7-8", "source": "n7", "target": "n8", "weight": 3},
+    {"id": "e7-9", "source": "n7", "target": "n9", "weight": 2},
+    {"id": "e6-9", "source": "n6", "target": "n9", "weight": 3},
+    {"id": "e9-8", "source": "n9", "target": "n8", "weight": 6},
+    {"id": "e8-10", "source": "n8", "target": "n10", "weight": 5},
+    {"id": "e9-10", "source": "n9", "target": "n10", "weight": 5}
+  ]
+}
