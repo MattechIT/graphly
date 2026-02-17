@@ -60,6 +60,7 @@ export function createNode(x = 0, y = 0, forcedId = null, forcedLabel = null) {
         algLabel: ""
     };
     state.nodes.push(nodeData);
+    updateNodeVisuals(nodeData);
     return nodeData;
 }
 
@@ -192,10 +193,22 @@ export function updateEdgesForNode(nodeId) {
 
 /**
  * Synchronizes the node DOM with current state values.
+ * Includes dynamic font-size calculation to fit text inside the node.
  */
 export function updateNodeVisuals(node) {
     node.labelEl.textContent = node.userLabel;
     node.algLabelEl.textContent = node.algLabel;
+
+    // Dynamic Font Sizing (using default size to measure correctly)
+    const padding = 4;
+    const maxWidth = (NODE_RADIUS * 2) - padding;
+    node.labelEl.style.fontSize = "14px";
+    
+    const bbox = node.labelEl.getBBox();
+    if (bbox.width > maxWidth) {
+        const newSize = Math.floor(14 * (maxWidth / bbox.width));
+        node.labelEl.style.fontSize = `${newSize}px`;
+    }
 }
 
 /**
