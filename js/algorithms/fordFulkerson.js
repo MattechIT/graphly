@@ -1,3 +1,5 @@
+import { getNodeLabel } from "./utils.js";
+
 /**
  * Ford-Fulkerson Algorithm
  * Computes the Maximum Flow in a flow network.
@@ -20,13 +22,8 @@ export function run(nodes, edges, params) {
         e.capacity = e.capacity || e.weight || 1; // Fallback to weight if capacity not set
     });
 
-    const getNodeLabel = (id) => {
-        const n = nodes.find(x => x.id === id);
-        return n ? (n.userLabel || id) : id;
-    };
-
     steps.push({
-        description: `Starting Max Flow from ${getNodeLabel(sourceId)} to ${getNodeLabel(sinkId)}. Initial flow is 0.`,
+        description: `Starting Max Flow from ${getNodeLabel(nodes, sourceId)} to ${getNodeLabel(nodes, sinkId)}. Initial flow is 0.`,
         changes: {
             nodes: [
                 { id: sourceId, state: "highlighted", algLabel: `[-, ∞]` },
@@ -89,7 +86,7 @@ export function run(nodes, edges, params) {
                     parent[v] = { from: u, edge: edge, type: 'forward' };
                     
                     const newCap = Math.min(uCap, residual);
-                    nodeLabels[v] = { pred: getNodeLabel(u), cap: newCap };
+                    nodeLabels[v] = { pred: getNodeLabel(nodes, u), cap: newCap };
                     neighborsToVisit.push({ id: v, label: nodeLabels[v] });
                     queue.push(v);
                 }
@@ -104,7 +101,7 @@ export function run(nodes, edges, params) {
                     visited.add(v);
                     parent[v] = { from: u, edge: edge, type: 'backward' };
                     const newCap = Math.min(uCap, residual);
-                    nodeLabels[v] = { pred: getNodeLabel(u), cap: newCap };
+                    nodeLabels[v] = { pred: getNodeLabel(nodes, u), cap: newCap };
                     neighborsToVisit.push({ id: v, label: nodeLabels[v] });
                     queue.push(v);
                 }
@@ -113,7 +110,7 @@ export function run(nodes, edges, params) {
             // Visualize newly labeled nodes
             if (neighborsToVisit.length > 0) {
                 steps.push({
-                    description: `Visiting neighbors of ${getNodeLabel(u)}. Updating labels.`,
+                    description: `Visiting neighbors of ${getNodeLabel(nodes, u)}. Updating labels.`,
                     changes: {
                         nodes: neighborsToVisit.map(n => ({
                             id: n.id,
@@ -140,10 +137,10 @@ export function run(nodes, edges, params) {
                 state: "highlighted", // Highlight path
                 width: 4 
             });
-            pathNodes.unshift(getNodeLabel(curr));
+            pathNodes.unshift(getNodeLabel(nodes, curr));
             curr = p.from;
         }
-        pathNodes.unshift(getNodeLabel(sourceId));
+        pathNodes.unshift(getNodeLabel(nodes, sourceId));
 
         steps.push({
             description: `Augmenting path found: ${pathNodes.join(" -> ")} with flow ${pathFlow}.`,
@@ -204,3 +201,4 @@ export function run(nodes, edges, params) {
 
     return steps;
 }
+

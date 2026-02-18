@@ -143,7 +143,29 @@ for (const edge of sortedEdges) {
 
 ---
 
-## 6. Registration
+## 6. Utilities & Helper Functions
+
+To maintain consistency and reduce boilerplate, common logic is extracted into `js/algorithms/utils.js`.
+
+### A. Node Labels
+When generating descriptions for your steps, always use `getNodeLabel` to ensure the log matches what the user sees on the canvas (prioritizing custom labels over IDs).
+
+```javascript
+import { getNodeLabel } from "./utils.js";
+
+export function run(nodes, edges, params) {
+    // ...
+    const label = getNodeLabel(nodes, nodeId);
+    steps.push({
+        description: `Visiting node ${label}`,
+        changes: { /* ... */ }
+    });
+}
+```
+
+---
+
+## 7. Registration
 1. Open `js/algorithms/registry.js`.
 2. Import your file: `import * as MyAlgorithm from './myAlgorithm.js';`
 3. Add it to the `AlgorithmRegistry` object.

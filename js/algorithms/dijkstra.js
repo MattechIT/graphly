@@ -1,3 +1,5 @@
+import { getNodeLabel } from "./utils.js";
+
 /**
  * Dijkstra's Shortest Path Algorithm
  * Calculates shortest paths from a source node to all other nodes.
@@ -150,7 +152,3 @@ export function run(nodes, edges, params) {
     return steps;
 }
 
-function getNodeLabel(nodes, id) {
-    const n = nodes.find(x => x.id === id);
-    return n ? (n.userLabel || id) : id;
-}

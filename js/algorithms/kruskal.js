@@ -1,3 +1,5 @@
+import { getNodeLabel } from "./utils.js";
+
 /**
  * Kruskal's Minimum Spanning Tree Algorithm
  */
@@ -12,11 +14,6 @@ export const metadata = {
 export function run(nodes, edges, params) {
     const steps = [];
     
-    const getNodeLabel = (id) => {
-        const n = nodes.find(x => x.id === id);
-        return n ? (n.userLabel || id) : id;
-    };
-
     const parent = {};
     nodes.forEach(n => parent[n.id] = n.id);
 
@@ -48,7 +45,7 @@ export function run(nodes, edges, params) {
     let lastDiscardedEdgeId = null;
 
     for (const edge of sortedEdges) {
-        const edgeLabel = `${getNodeLabel(edge.source)}-${getNodeLabel(edge.target)}`;
+        const edgeLabel = `${getNodeLabel(nodes, edge.source)}-${getNodeLabel(nodes, edge.target)}`;
         
         // --- STEP: ANALYSIS ---
         // If the previous edge was discarded, reset it in this step
@@ -111,3 +108,4 @@ export function run(nodes, edges, params) {
 
     return steps;
 }
+
