@@ -6,7 +6,7 @@
     "type": "list",
     "steps": [
       "<strong>Add Node:</strong> Click the 'Add Node' button, then click anywhere on the canvas.",
-      "<strong>Add Edge:</strong> Click 'Add Edge', then drag from one node to another.",
+      "<strong>Add Edge:</strong> Click 'Add Edge', then drag from one node to another OR click Source and then the Destination.",
       "<strong>Move:</strong> In 'Move' mode (default), drag nodes to reposition them.",
       "<strong>Edit/Delete:</strong> Click on a node or edge to open the property panel."
     ],
