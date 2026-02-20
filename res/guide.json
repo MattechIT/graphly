@@ -56,7 +56,8 @@
     "type": "list",
     "steps": [
       "<strong>From Text:</strong> Paste a node and/or an edge list (e.g., <code>A B 10</code>) for quick import.",
-      "<strong>From JSON:</strong> Upload a previously saved <code>.json</code> file."
+      "<strong>From JSON:</strong> Upload a previously saved <code>.json</code> file.",
+      "<strong>Test Graph:</strong> You can load an example graph using the <code>From Text<code> panel."
     ],
     "image": "res/gif/save.gif"
   }
